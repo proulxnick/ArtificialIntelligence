@@ -25,24 +25,54 @@ class State:
             return False
 
 
-def process_crossing(state, left_runners, right_runners):
-    child_nodes = list()
+def process_crossing(state):
+    # child_nodes = list()
+    if state.is_at_goal():
+        return 'reached goal'
+
+    elif state.torch == 'Left':  # the torch is on the left -- must cross right
+        # moving two runners to the right
+        new_state = State(state.runners_left - 2, 'Right', state.runners_right + 2)
+        if new_state.is_valid_cross():
+            new_state.parent = state
+            # child_nodes.append(new_state)
+            return new_state
+
+        # # move one runner from left to the right
+        # new_state = State(state.runners_left - 1, 'Right', state.runners_right + 1)
+        # if new_state.is_valid_cross():
+        #     new_state.parent = state
+        #     child_nodes.append(new_state)
+
+    else:  # the torch is on the right -- must cross left
+        # have one person bring the torch back to the left
+        new_state = State(state.runners_left + 1, 'Left', state.runners_right - 1)
+        if new_state.is_valid_cross():
+            new_state.parent = state
+            # child_nodes.append(new_state)
+            return new_state
+
+
+def run():
+    initial_state = State(6, 'Left', 0)
+    state = process_crossing(initial_state)
+    path = list()
+    path.append(state)
     while not state.is_at_goal():
-        if state.torch == 'Left':  # the torch is on the left -- must cross right
-            # moving two runners to the right
-            new_state = State(state.runners_left - 2, 'Right', state.runners_right + 2)
-            if new_state.is_valid_cross():
-                new_state.parent = state
-                child_nodes.append(new_state)
+        if state.is_at_goal():
+            return 'Done!!'
+        else:
+            state = process_crossing(state)
+            path.append(state)
 
-        else:  # the torch is on the right -- must cross left
-            # have one person bring the torch back to the left
-            new_state = State(state.runners_left + 1, 'Left', state.runners_right - 1)
-            if new_state.is_valid_cross():
-                new_state.parent = state
-                child_nodes.append(new_state)
+    return path
 
-    return child_nodes
+
+def print_path(path):
+    for nodes in path:
+        print 'left: ' + str(nodes.runners_left)
+        print 'torch: ' + nodes.torch
+        print 'right: ' + str(nodes.runners_right) + '\n\n'
 
 
 # only hard coded for testing
@@ -71,11 +101,13 @@ def initiate_crossing():
 
 
 def main():
-    left_runners, torch, right_runners = initiate_crossing()
-    left_len = len(left_runners)
-    right_len = len(right_runners)
-    state = State(left_len, 'Left', right_len)
-    print process_crossing(state, left_runners, right_runners)
+    # left_runners, torch, right_runners = initiate_crossing()
+    # left_len = len(left_runners)
+    # right_len = len(right_runners)
+    # state = State(left_len, 'Left', right_len)
+    # print process_crossing(state)
+
+    print_path(run())
 
 
 if __name__ == '__main__':
