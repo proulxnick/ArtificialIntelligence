@@ -65,7 +65,17 @@ def initiate_runners():
     left_side.append(r5)
     left_side.append(r6)
 
-    return left_side, torch, right_side
+    # initialize the root state and create a new root node with that state
+    left_num = len(left_side)
+    right_num = len(right_side)
+    initial_state = State(left_num, torch, right_num, 0)
+    node = Node()
+    node.depth = 0
+    node.parent = None
+    node.state = initial_state
+    run_time = node.state.run_time
+
+    return left_side, torch, right_side, node, run_time
 
 
 def path_exists(path_list, new_node):
@@ -141,15 +151,7 @@ def successor_processing(state, old_node, left_runners, right_runners):
 
 def breadth_first():
     # initialize the root state and create a new root node with that state
-    left_side, torch, right_side = initiate_runners()
-    left_num = len(left_side)
-    right_num = len(right_side)
-    initial_state = State(left_num, torch, right_num, 0)
-    node = Node()
-    node.depth = 0
-    node.parent = None
-    node.state = initial_state
-    run_time = node.state.run_time
+    left_side, torch, right_side, node, run_time = initiate_runners()
 
     path_to_goal = list()
     path_to_goal.append(node)
@@ -174,8 +176,36 @@ def breadth_first():
     return path_to_goal, run_time
 
 
+def depth_first():
+    # initialize the root state and create a new root node with that state
+    left_side, torch, right_side, node, run_time = initiate_runners()
+
+    path_to_goal = list()
+    path_to_goal.append(node)
+
+    stack = list()
+
+    while not node.state.is_at_goal():
+        node, left_side, right_side = successor_processing(node.state,
+                                                           node,
+                                                           left_side,
+                                                           right_side)
+        for each_node in node.children:
+            stack.append(each_node)
+
+        new_node = stack.pop()
+        if not path_exists(path_to_goal, new_node) \
+           and new_node.state.is_valid_cross():
+            path_to_goal.append(new_node)
+            run_time += new_node.state.run_time
+            node = new_node
+
+    return path_to_goal, run_time
+
+
 def print_path():
-    path, run_time = breadth_first()
+    # path, run_time = breadth_first()
+    path, run_time = depth_first()
     i = 0
     for node in path:
         print 'Move: ' + str(i)
