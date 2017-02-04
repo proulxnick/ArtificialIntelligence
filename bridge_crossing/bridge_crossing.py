@@ -184,18 +184,29 @@ def depth_first():
     path_to_goal.append(node)
 
     stack = list()
+    already_processed = False
 
     while not node.state.is_at_goal():
-        node, left_side, right_side = successor_processing(node.state,
-                                                           node,
-                                                           left_side,
-                                                           right_side)
-        for each_node in node.children:
-            stack.append(each_node)
+        if not already_processed:
+            node, left_side, right_side = successor_processing(node.state,
+                                                               node,
+                                                               left_side,
+                                                               right_side)
+            already_processed = True
 
-        new_node = stack.pop()
+            for each_node in node.children:
+                stack.append(each_node)
+
+        new_node = Node()
+        new_node.state = stack[-1].state
+        new_node.parent = stack[-1].parent
+        new_node.depth = stack[-1].depth
+
+        stack.remove(stack[-1])
+
         if not path_exists(path_to_goal, new_node) \
            and new_node.state.is_valid_cross():
+            already_processed = False
             path_to_goal.append(new_node)
             run_time += new_node.state.run_time
             node = new_node
