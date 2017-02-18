@@ -82,27 +82,46 @@ def path_exists(path_list, new_node):
     return is_old_state
 
 
+def heuristic_1():
+    # the goal of this heuristic function is to return the node in the
+    # list passed in that has the slowest overall runtime
+    pass
+
+
+def heuristic_2():
+    # the goal of this heuristic function is to add the runtime of each
+    # node to its depth and return the cheapest option
+    pass
+
+
 def successor_processing(state, old_node, left_runners, right_runners):
     if state.is_at_goal():
         return 'Already at goal!'
 
     elif state.torch == 'Left':
         if len(left_runners) > 1:
-            while len(left_runners) > 1:
-                # move 2 runners at a time across the bridge
-                new_state = State(state.runners_left - 2, 'Right', state.runners_right + 2,
-                                  max(left_runners[0].run_time, left_runners[1].run_time))
+            # while len(left_runners) > 1:
+            # move 2 runners at a time across the bridge
+            i = 0
+            # while i < len(left_runners) - 1:
+            for node in left_runners:
+                if i < len(left_runners) - 1:
+                    j = 1  # index one after the first runner chosen by above loop
+                    while j < len(left_runners):
+                        new_state = State(state.runners_left - 2, 'Right', state.runners_right + 2,
+                                          max(node.run_time, left_runners[j].run_time))
 
-                # set attributes of new node and move runners accordingly
-                new_node = Node()
-                new_node.state = new_state
-                new_node.parent = old_node
-                new_node.depth = old_node.depth + 1
-                old_node.children.append(new_node)
-                right_runners.append(left_runners[1])
-                right_runners.append(left_runners[0])
-                left_runners.remove(left_runners[1])
-                left_runners.remove(left_runners[0])
+                        # set attributes of new node and move runners accordingly
+                        new_node = Node()
+                        new_node.state = new_state
+                        new_node.parent = old_node
+                        new_node.depth = old_node.depth + 1
+                        old_node.children.append(new_node)
+                        j += 1
+                # remove the first in the list
+                right_runners.append(node)
+                left_runners.remove(node)
+                i += 1
 
         if len(left_runners) == 1:
             # maybe for some reason there is less than 2 people and need to bring only one to right
@@ -201,9 +220,39 @@ def depth_first():
     return path_to_goal, run_time
 
 
+def a_star():
+    # initialize the root state and create a new root node with that state
+    left_side, torch, right_side, node, run_time, total_runners = initiate_runners()
+
+    path_to_goal = list()
+    path_to_goal.append(node)
+
+    while not node.state.is_at_goal():
+        # initialize the root state and create a new root node with that state
+        node, left_side, right_side = successor_processing(node.state,
+                                                           node,
+                                                           left_side,
+                                                           right_side)
+        # save the slowest run_time across bridge
+        cheapest_run_time = 0
+        curr_node = Node()
+        for each_node in node.children:
+            if not path_exists(path_to_goal, each_node):
+                if cheapest_run_time == 0 \
+                        or each_node.state.run_time < cheapest_run_time:
+                    cheapest_run_time = each_node.state.run_time
+                    curr_node = each_node  # current node now has cheapest run time at it's depth
+
+        # append the node with the cheapest crossing time to the final path to the goal state
+        path_to_goal.append(curr_node)
+        run_time += curr_node.state.run_time
+        node = curr_node  # get successors / fringe from the cheapest node at this state
+
+
 def print_path():
     # path, run_time = breadth_first()
     path, run_time = depth_first()
+    # path, run_time = a_star()
     i = 0
     print '\n'
     for node in path:
