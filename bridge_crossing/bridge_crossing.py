@@ -37,6 +37,7 @@ class Node:
         self.parent = None
         self.depth = 0
         self.children = list()  # to be used to create possible child nodes dynamically and append to list
+        self.heuristic_value = 0
 
 
 # only hard coded for testing
@@ -68,6 +69,14 @@ def initiate_runners():
     return left_side, torch, right_side, node, run_time, total_runners
 
 
+def sum_runtime(path_to_goal):
+    run_time = 0
+    for node in path_to_goal:
+        run_time += node.state.run_time
+
+    return run_time
+
+
 def path_exists(path_list, new_node):
     # this is a method to check if the state of the given node exists in the given path
     is_old_state = False
@@ -82,10 +91,15 @@ def path_exists(path_list, new_node):
     return is_old_state
 
 
-def heuristic_1():
+def heuristic_1(children):
     # the goal of this heuristic function is to return the node in the
     # list passed in that has the slowest overall runtime
-    pass
+    cheapest_node = children[0]
+    for node in children:
+        if node.state.run_time < cheapest_node.state.run_time:
+            cheapest_node = node
+
+    return cheapest_node
 
 
 def heuristic_2():
@@ -225,6 +239,8 @@ def a_star():
     left_side, torch, right_side, node, run_time, total_runners = initiate_runners()
 
     path_to_goal = list()
+    closed_list = list()
+    transplant = False
     path_to_goal.append(node)
 
     while not node.state.is_at_goal():
@@ -233,26 +249,46 @@ def a_star():
                                                            node,
                                                            left_side,
                                                            right_side)
-        # save the slowest run_time across bridge
-        cheapest_run_time = 0
-        curr_node = Node()
-        for each_node in node.children:
-            if not path_exists(path_to_goal, each_node):
-                if cheapest_run_time == 0 \
-                        or each_node.state.run_time < cheapest_run_time:
-                    cheapest_run_time = each_node.state.run_time
-                    curr_node = each_node  # current node now has cheapest run time at it's depth
 
-        # append the node with the cheapest crossing time to the final path to the goal state
-        path_to_goal.append(curr_node)
-        run_time += curr_node.state.run_time
-        node = curr_node  # get successors / fringe from the cheapest node at this state
+        cheapest_node = heuristic_1(node.children)
+        # add all other nodes other than the cheapest one to open, cheapest gets added to closed (or path)
+        for each_node in node.children:
+            if not each_node == cheapest_node:
+                closed_list.append(each_node)
+
+        if path_exists(closed_list, cheapest_node):
+            for each_node in closed_list:
+                if cheapest_node.state.runners_left == each_node.state.runners_left \
+                        and cheapest_node.state.runners_right == each_node.state.runners_right \
+                        and cheapest_node.state.torch == each_node.state.torch:
+                            cheapest_node.heuristic_value = cheapest_node.state.run_time + cheapest_node.depth
+                            each_node.heuristic_value = each_node.state.run_time + cheapest_node.depth
+
+                if each_node.heuristic_value < cheapest_node.heuristic_value:
+                    # if the heuristic of the node already in path is cheaper than the one being checked
+                    # then transplant children and change scope
+                    # path_to_goal[-1].children = cheapest_node.children
+                    i = each_node.depth
+                    path_to_goal = path_to_goal[:i]
+                    path_to_goal.append(each_node)
+                    run_time = sum_runtime(path_to_goal)
+                    transplant = True
+                    break
+
+        if not transplant:  # there was a change of scope due to heuristic
+            path_to_goal.append(cheapest_node)
+            run_time += cheapest_node.state.run_time
+
+        node = path_to_goal[-1]
+
+    print '\nA* search chosen'
+    return path_to_goal, run_time
 
 
 def print_path():
     # path, run_time = breadth_first()
-    path, run_time = depth_first()
-    # path, run_time = a_star()
+    # path, run_time = depth_first()
+    path, run_time = a_star()
     i = 0
     print '\n'
     for node in path:
