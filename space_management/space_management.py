@@ -16,6 +16,31 @@ class Node:
         self.children = list()  # to be used to create possible child nodes dynamically and append to list
         self.heuristic_value = 0
 
+    def is_at_goal(self,  blank_tiles):
+        # the defined goal state for my scope is having all blank tiles at the beginning
+        # of the list and all the numbers iterating upward in sequence
+
+        i = 1  # for control
+        j = 1  # to count until number of blank tiles
+        at_goal = True
+        for tile in self.state:
+            if j <= blank_tiles:
+                if tile == 'x':
+                    j += 1
+                    continue
+                else:
+                    j += 1
+                    at_goal = False
+            else:
+                if tile == i:
+                    i += 1
+                    continue
+                else:
+                    i += 1
+                    at_goal = False
+
+        return at_goal
+
 
 def copy_list(old_list):
     # used to copy contents of one list and create another list
@@ -37,32 +62,28 @@ def create_child(curr_node, new_grid):
     return new_node
 
 
-def is_at_goal(grid, blank_tiles):
+def heuristic_1(grid, blank_tiles):
     # the defined goal state for my scope is having all blank tiles at the beginning
     # of the list and all the numbers iterating upward in sequence
+
     i = 1  # for control
     j = 1  # to count until number of blank tiles
-    at_goal = True
+    count = 0  # num tiles out of place
     for tile in grid:
-        if not j == blank_tiles:
-            if tile == 'x':
-                continue
-            else:
-                at_goal = False
-                break
+        if j <= blank_tiles:
+            if not tile == 'x':
+                count += 1
         else:
-            if tile == i:
-                i += 1
-                continue
-            else:
-                at_goal = False
-                break
+            if not tile == i:
+                count += 1
+            i += 1
+        j += 1
 
-    return at_goal
+    return count
 
 
 def initiate_grid():
-    sequence = [6, 1, 5, 7, 'x', 3, 2, 4, 8]
+    sequence = [6, 1, 'x', 7, 2, 3, 5, 4, 8]
     # grid = random.shuffle(sequence)
 
     x_sum = 3
@@ -71,6 +92,17 @@ def initiate_grid():
     blank_tiles = 1
 
     return sequence, x_sum, y_sum, blank_tiles
+
+
+def path_exists(path_list, new_node):
+    # this is a method to check if the state of the given node exists in the given path
+    is_old_state = False
+
+    for node in path_list:
+        if new_node.state == node.state:
+            is_old_state = True
+
+    return is_old_state
 
 
 def successor_processing(curr_node, x_sum, y_sum):
@@ -208,7 +240,7 @@ def successor_processing(curr_node, x_sum, y_sum):
 
         # iterate x and y axis markers
         if k == x_sum:
-            k = 0
+            k = 1
             j += 1
         else:
             k += 1
@@ -218,24 +250,87 @@ def successor_processing(curr_node, x_sum, y_sum):
     return curr_node
 
 
-# to be called at top level
-def main():
+def breadth_first():
     grid, x_sum, y_sum, blank_tiles = initiate_grid()
-    node = Node()
-    node.state = grid
     print grid[0], grid[1], grid[2]
     print grid[3], grid[4], grid[5]
-    print grid[6], grid[7], grid[8]
-    print '\n'
-    successor_processing(node, x_sum, y_sum)
+    print grid[6], grid[7], grid[8], '\n'
 
-    i = 1
-    for each_node in node.children:
-        print each_node.state[0], each_node.state[1], each_node.state[2]
-        print each_node.state[3], each_node.state[4], each_node.state[5]
-        print each_node.state[6], each_node.state[7], each_node.state[8]
-        print '\n'
+    node = Node()
+    node.state = grid
 
+    path_to_goal = list()
+    path_to_goal.append(node)
+
+    while not node.is_at_goal(blank_tiles):
+        # initialize the root state and create a new root node with that state
+        node = successor_processing(node, x_sum, y_sum)
+
+        # save the slowest run_time across bridge
+        cheapest = 0
+        curr_node = Node()
+        for each_node in node.children:
+            if not path_exists(path_to_goal, each_node):
+                out_of_place = heuristic_1(each_node.state, blank_tiles)
+                if cheapest == 0 \
+                        or out_of_place < cheapest:
+                    cheapest = out_of_place
+                    curr_node = each_node  # current node now has cheapest run time at it's depth
+
+        # append the node with the cheapest crossing time to the final path to the goal state
+        path_to_goal.append(curr_node)
+        node = curr_node  # get successors / fringe from the cheapest node at this state
+
+    print '\nBreadth-first search chosen'
+    return path_to_goal
+
+
+def depth_first():
+    grid, x_sum, y_sum, blank_tiles = initiate_grid()
+    print grid[0], grid[1], grid[2]
+    print grid[3], grid[4], grid[5]
+    print grid[6], grid[7], grid[8], '\n'
+
+    path_to_goal = list()
+    node = Node()
+    node.state = grid
+    path_to_goal.append(node)
+    stack = list()  # use a stack for dfs
+    already_processed = False
+
+    while not node.is_at_goal(blank_tiles):
+        if not already_processed:
+            node = successor_processing(node, x_sum, y_sum)
+            already_processed = True
+            stack.extend(node.children)  # add the children to the top of the stack
+
+        curr_node = stack.pop()  # take the latest child addition as current node
+        if not path_exists(path_to_goal, curr_node):
+            already_processed = False
+            path_to_goal.append(curr_node)
+            node = curr_node  # use this current node to get it's successors / fringe
+
+    print '\nDepth-first search chosen'
+    return path_to_goal
+
+
+def print_path(path):
+    for node in path:
+        print node.state[0], node.state[1], node.state[2]
+        print node.state[3], node.state[4], node.state[5]
+        print node.state[6], node.state[7], node.state[8], '\n'
+
+
+# to be called at top level
+def main():
+    path = breadth_first()
+    print_path(path)
+    # node = Node()
+    #
+    # x = ['x', 1, 2, 3, 4, 5, 6, 7, 8]
+    # node.state = x
+    # print node.is_at_goal(1)
+    # print heuristic_1(x, 1)
 
 # top level code
 if __name__ == '__main__':
