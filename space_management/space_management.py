@@ -10,7 +10,7 @@ import random
 class Node:
 
     def __init__(self):
-        self.state = None
+        self.state = list()
         self.parent = None
         self.depth = 0
         self.children = list()  # to be used to create possible child nodes dynamically and append to list
@@ -62,15 +62,15 @@ def is_at_goal(grid, blank_tiles):
 
 
 def initiate_grid():
-    sequence = [1, 2, 3, 4, 5, 6, 7, 8, 'x']
-    grid = random.shuffle(sequence)
+    sequence = [6, 1, 5, 7, 'x', 3, 2, 4, 8]
+    # grid = random.shuffle(sequence)
 
     x_sum = 3
     y_sum = 3
     total = x_sum * y_sum
     blank_tiles = 1
 
-    return grid, x_sum, y_sum, blank_tiles
+    return sequence, x_sum, y_sum, blank_tiles
 
 
 def successor_processing(curr_node, x_sum, y_sum):
@@ -203,6 +203,8 @@ def successor_processing(curr_node, x_sum, y_sum):
                and k > 2:
                 new_grid = copy_list(frontier)
                 new_grid[i], new_grid[i + (x_sum - 2)] = new_grid[i + (x_sum - 2)], new_grid[i]
+                new_node = create_child(curr_node, new_grid)
+                curr_node.children.append(new_node)
 
         # iterate x and y axis markers
         if k == x_sum:
@@ -213,10 +215,26 @@ def successor_processing(curr_node, x_sum, y_sum):
 
         i += 1
 
+    return curr_node
+
 
 # to be called at top level
 def main():
-    pass
+    grid, x_sum, y_sum, blank_tiles = initiate_grid()
+    node = Node()
+    node.state = grid
+    print grid[0], grid[1], grid[2]
+    print grid[3], grid[4], grid[5]
+    print grid[6], grid[7], grid[8]
+    print '\n'
+    successor_processing(node, x_sum, y_sum)
+
+    i = 1
+    for each_node in node.children:
+        print each_node.state[0], each_node.state[1], each_node.state[2]
+        print each_node.state[3], each_node.state[4], each_node.state[5]
+        print each_node.state[6], each_node.state[7], each_node.state[8]
+        print '\n'
 
 
 # top level code
