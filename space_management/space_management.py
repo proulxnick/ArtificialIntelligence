@@ -83,13 +83,50 @@ def heuristic_1(grid, blank_tiles):
 
 
 def initiate_grid():
-    sequence = [4, 3, 'x', 1, 5, 2]
-    # grid = random.shuffle(sequence)
+    # sequence = [4, 3, 'x', 1, 5, 2]
+    # # grid = random.shuffle(sequence)
+    #
+    # x_sum = 2
+    # y_sum = 3
+    # total = x_sum * y_sum
+    # blank_tiles = 1
 
-    x_sum = 2
-    y_sum = 3
+    print "Enter the X and Y coordinates to make up the grid size (e.g X=3 and Y=3 for a 3x3 grid matrix)"
+    x_sum = input("X coordinates: ")
+    y_sum = input("Y coordinates: ")
+
+    print '\n'
+
+    blank_tiles = input("Enter number of blank spaces in the grid: ")
+
     total = x_sum * y_sum
-    blank_tiles = 1
+
+    i = 1
+    k = 1
+    sequence = list()
+    while i <= total:
+        if i <= blank_tiles:
+            sequence.append('x')
+        else:
+            sequence.append(k)
+            k += 1
+        i += 1
+
+    random.shuffle(sequence)
+
+    print 'The original grid is: '
+    i = 1
+    j = 0
+    while j < total:
+        print sequence[j],
+        if not i == x_sum:
+            i += 1
+        else:
+            print''
+            i = 1
+        j += 1
+
+    print '\n'
 
     return sequence, x_sum, y_sum, blank_tiles
 
@@ -268,10 +305,6 @@ def successor_processing(curr_node, x_sum, y_sum):
 
 def breadth_first():
     grid, x_sum, y_sum, blank_tiles = initiate_grid()
-    print grid[0], grid[1], grid[2]
-    print grid[3], grid[4], grid[5]
-    print grid[6], grid[7], grid[8], '\n'
-
     node = Node()
     node.state = grid
 
@@ -299,7 +332,7 @@ def breadth_first():
 
     print '\nBreadth-first search chosen'
     print 'Total number of moves: ' + str(node.depth)
-    return path_to_goal
+    return path_to_goal, x_sum, y_sum
 
 
 def depth_first():
@@ -329,15 +362,11 @@ def depth_first():
         node = curr_node  # use this current node to get it's successors / fringe
 
     print '\nDepth-first search chosen'
-    return path_to_goal
+    return path_to_goal, x_sum, y_sum
 
 
 def a_star():
     grid, x_sum, y_sum, blank_tiles = initiate_grid()
-    print grid[0], grid[1],
-    print grid[2], grid[3],
-    print grid[4], grid[5], '\n'
-
     node = Node()
     node.state = grid
 
@@ -345,6 +374,7 @@ def a_star():
     closed = list()
     transplanted = list()
     path_to_goal.append(node)
+    scope_changes = 0
 
     while not node.is_at_goal(blank_tiles):
         # initialize the root state and create a new root node with that state
@@ -370,7 +400,6 @@ def a_star():
                 curr_node.heuristic_value = cost
 
         transplant = False
-        scope_changes = 0
         if path_exists(closed, curr_node):
             for closed_node in closed:
                 if closed_node.state == curr_node.state \
@@ -396,20 +425,29 @@ def a_star():
     print '\nA star search chosen'
     print 'Total number of moves: ' + str(node.depth)
     print 'Total number of transplants of children (changes of scope): ' + str(scope_changes)
-    return path_to_goal
+    return path_to_goal, x_sum, y_sum
 
 
-def print_path(path):
+def print_path(path, x_sum, y_sum):
+    total = x_sum * y_sum
     for node in path:
-        print node.state[0], node.state[1],
-        print node.state[2], node.state[3],
-        print node.state[4], node.state[5], '\n'
+        i = 1
+        j = 0
+        while j < total:
+            print node.state[j],
+            if not i == x_sum:
+                i += 1
+            else:
+                print''
+                i = 1
+            j += 1
+        print '\n'
 
 
 # to be called at top level
 def main():
-    path = a_star()
-    print_path(path)
+    path, x, y = breadth_first()
+    print_path(path, x, y)
 
 
 # top level code
