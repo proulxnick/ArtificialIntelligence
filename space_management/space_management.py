@@ -1,12 +1,6 @@
 import random
 
 
-# class State:
-#
-#     def __init__(self, grid):
-#         self.grid = grid
-
-
 class Node:
 
     def __init__(self):
@@ -44,8 +38,8 @@ class Node:
 
 def copy_list(old_list):
     # used to copy contents of one list and create another list
-    new_list = list()
 
+    new_list = list()
     for i in old_list:
         new_list.append(i)
 
@@ -54,6 +48,7 @@ def copy_list(old_list):
 
 def create_child(curr_node, new_grid):
     # create a new node to be appended to the current node's list of children
+
     new_node = Node()
     new_node.parent = curr_node
     new_node.state = new_grid
@@ -84,6 +79,7 @@ def heuristic_1(grid, blank_tiles):
 
 def heuristic_2(grid, blank_tiles):
     # get the lowest distance every tile is from it's endpoint and return it
+
     total_distance = 0
     for tile in grid:
         if tile == 'x':
@@ -101,13 +97,7 @@ def heuristic_2(grid, blank_tiles):
 
 
 def initiate_grid():
-    # sequence = [4, 3, 'x', 1, 5, 2]
-    # # grid = random.shuffle(sequence)
-    #
-    # x_sum = 2
-    # y_sum = 3
-    # total = x_sum * y_sum
-    # blank_tiles = 1
+    # get the user to specify the grid size and number of tiles
 
     print "Enter the X and Y coordinates to make up the grid size (e.g X=3 and Y=3 for a 3x3 grid matrix)"
     x_sum = input("X coordinates: ")
@@ -130,7 +120,7 @@ def initiate_grid():
             k += 1
         i += 1
 
-    random.shuffle(sequence)
+    random.shuffle(sequence)  # randomize the matrix
 
     print 'The original grid is: '
     i = 1
@@ -342,7 +332,7 @@ def breadth_first():
                 if cheapest == 0 \
                    or out_of_place < cheapest:
                     cheapest = out_of_place
-                    curr_node = each_node  # current node now has cheapest run time at it's depth
+                    curr_node = each_node  # current node now has cheapest heuristic value
 
         # append the node with the cheapest crossing time to the final path to the goal state
         path_to_goal.append(curr_node)
@@ -398,7 +388,7 @@ def a_star():
         # initialize the root state and create a new root node with that state
         node = successor_processing(node, x_sum, y_sum)
 
-        # save the slowest run_time across bridge
+        # will be the cheapest heuristic value
         cheapest = 0
         curr_node = Node()
         for each_node in node.children:
@@ -417,7 +407,7 @@ def a_star():
             else:
                 curr_node.heuristic_value = cost
 
-        transplant = False
+        transplant = False  # to check if a node's children were transplanted for change of scope
         if path_exists(closed, curr_node):
             for closed_node in closed:
                 if closed_node.state == curr_node.state \
@@ -425,6 +415,7 @@ def a_star():
                    and closed_node.depth < curr_node.depth\
                    and closed_node.state not in transplanted\
                    and curr_node.state not in transplanted:
+                    # there is a better option in the list of nodes visited, transplant the children
                     i = closed_node.depth
                     path_to_goal = path_to_goal[:i]
                     path_to_goal.append(closed_node)
@@ -447,6 +438,7 @@ def a_star():
 
 
 def print_path(path, x_sum, y_sum):
+    # used to print out the states of each node as the specified matrix size
     total = x_sum * y_sum
     for node in path:
         i = 1
@@ -464,7 +456,9 @@ def print_path(path, x_sum, y_sum):
 
 # to be called at top level
 def main():
-    path, x, y = breadth_first()
+    # path, x, y = breadth_first()
+    path, x, y = a_star()
+    # path, x, y = depth_first()
     print_path(path, x, y)
 
 
