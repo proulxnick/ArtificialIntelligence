@@ -82,6 +82,24 @@ def heuristic_1(grid, blank_tiles):
     return count
 
 
+def heuristic_2(grid, blank_tiles):
+    # get the lowest distance every tile is from it's endpoint and return it
+    total_distance = 0
+    for tile in grid:
+        if tile == 'x':
+            continue
+        curr_index = grid.index(tile)
+        if curr_index == blank_tiles + (tile - 1):
+            continue
+        else:
+            difference = blank_tiles + (tile - 1) - curr_index
+            if difference < 0:
+                difference = (difference * -1)
+            total_distance += difference
+
+    return total_distance
+
+
 def initiate_grid():
     # sequence = [4, 3, 'x', 1, 5, 2]
     # # grid = random.shuffle(sequence)
@@ -320,7 +338,7 @@ def breadth_first():
         curr_node = Node()
         for each_node in node.children:
             if not path_exists(path_to_goal, each_node):
-                out_of_place = heuristic_1(each_node.state, blank_tiles)
+                out_of_place = heuristic_2(each_node.state, blank_tiles)
                 if cheapest == 0 \
                    or out_of_place < cheapest:
                     cheapest = out_of_place
@@ -385,14 +403,14 @@ def a_star():
         curr_node = Node()
         for each_node in node.children:
             if not path_exists(path_to_goal, each_node):
-                out_of_place = heuristic_1(each_node.state, blank_tiles)
+                out_of_place = heuristic_2(each_node.state, blank_tiles)
                 if cheapest == 0 \
                         or out_of_place < cheapest:
                     cheapest = out_of_place
                     curr_node = each_node  # current node now has cheapest run time at it's depth
 
         for each_node in node.children:
-            cost = heuristic_1(each_node.state, blank_tiles)
+            cost = heuristic_2(each_node.state, blank_tiles)
             if not each_node.state == curr_node.state:
                 each_node.heuristic_value = cost
                 closed.append(each_node)
