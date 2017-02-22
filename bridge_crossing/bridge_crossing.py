@@ -114,7 +114,6 @@ def successor_processing(state, old_node, left_runners, right_runners):
 
     elif state.torch == 'Left':
         if len(left_runners) > 1:
-            # while len(left_runners) > 1:
             # move 2 runners at a time across the bridge
             i = 0
             # while i < len(left_runners) - 1:
@@ -280,6 +279,7 @@ def a_star():
             run_time += cheapest_node.state.run_time
 
         node = path_to_goal[-1]
+        transplant = False
 
     print '\nA* search chosen'
     return path_to_goal, run_time
