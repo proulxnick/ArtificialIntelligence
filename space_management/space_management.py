@@ -83,10 +83,10 @@ def heuristic_1(grid, blank_tiles):
 
 
 def initiate_grid():
-    sequence = [6, 1, 'x', 7, 2, 3, 5, 4, 8]
+    sequence = [4, 3, 'x', 1, 5, 2]
     # grid = random.shuffle(sequence)
 
-    x_sum = 3
+    x_sum = 2
     y_sum = 3
     total = x_sum * y_sum
     blank_tiles = 1
@@ -178,65 +178,81 @@ def successor_processing(curr_node, x_sum, y_sum):
             if j > 2 \
                and k > 1:
                 new_grid = copy_list(frontier)
-                new_grid[i], new_grid[i - ((2 * x_sum) + 1)] = new_grid[i - ((2 * x_sum) + 1)], new_grid[i]
-                new_node = create_child(curr_node, new_grid)
-                curr_node.children.append(new_node)
+                if not new_grid[i] == 'x' \
+                   and not new_grid[i - ((2 * x_sum) + 1)] == 'x':
+                    new_grid[i], new_grid[i - ((2 * x_sum) + 1)] = new_grid[i - ((2 * x_sum) + 1)], new_grid[i]
+                    new_node = create_child(curr_node, new_grid)
+                    curr_node.children.append(new_node)
 
             # move 2 - up 1, left 2
             if j > 1 \
                and k > 2:
                 new_grid = copy_list(frontier)
-                new_grid[i], new_grid[i - (x_sum + 2)] = new_grid[i - (x_sum + 2)], new_grid[i]
-                new_node = create_child(curr_node, new_grid)
-                curr_node.children.append(new_node)
+                if not new_grid[i] == 'x' \
+                   and not new_grid[i - (x_sum + 2)] == 'x':
+                    new_grid[i], new_grid[i - (x_sum + 2)] = new_grid[i - (x_sum + 2)], new_grid[i]
+                    new_node = create_child(curr_node, new_grid)
+                    curr_node.children.append(new_node)
 
             # move 3 - up 2, right 1
             if j > 2 \
                and k < x_sum:
                 new_grid = copy_list(frontier)
-                new_grid[i], new_grid[i - ((2 * x_sum) - 1)] = new_grid[i - ((2 * x_sum) - 1)], new_grid[i]
-                new_node = create_child(curr_node, new_grid)
-                curr_node.children.append(new_node)
+                if not new_grid[i] == 'x' \
+                   and not new_grid[i - ((2 * x_sum) - 1)] == 'x':
+                    new_grid[i], new_grid[i - ((2 * x_sum) - 1)] = new_grid[i - ((2 * x_sum) - 1)], new_grid[i]
+                    new_node = create_child(curr_node, new_grid)
+                    curr_node.children.append(new_node)
 
             # move 4 - up 1, right 2
             if j > 1 \
                and k < (x_sum - 1):
                 new_grid = copy_list(frontier)
-                new_grid[i], new_grid[i - (x_sum - 2)] = new_grid[i - (x_sum - 2)], new_grid[i]
-                new_node = create_child(curr_node, new_grid)
-                curr_node.children.append(new_node)
+                if not new_grid[i] == 'x' \
+                   and not new_grid[i - (x_sum - 2)] == 'x':
+                    new_grid[i], new_grid[i - (x_sum - 2)] = new_grid[i - (x_sum - 2)], new_grid[i]
+                    new_node = create_child(curr_node, new_grid)
+                    curr_node.children.append(new_node)
 
             # move 5 - down 2, right 1
             if j < (y_sum - 1) \
                and k < x_sum:
                 new_grid = copy_list(frontier)
-                new_grid[i], new_grid[i + ((2 * x_sum) + 1)] = new_grid[i + ((2 * x_sum) + 1)], new_grid[i]
-                new_node = create_child(curr_node, new_grid)
-                curr_node.children.append(new_node)
+                if not new_grid[i] == 'x' \
+                   and not new_grid[i + ((2 * x_sum) + 1)] == 'x':
+                    new_grid[i], new_grid[i + ((2 * x_sum) + 1)] = new_grid[i + ((2 * x_sum) + 1)], new_grid[i]
+                    new_node = create_child(curr_node, new_grid)
+                    curr_node.children.append(new_node)
 
             # move 6 - down 1, right 2
             if j < y_sum \
                and k < (x_sum - 1):
                 new_grid = copy_list(frontier)
-                new_grid[i], new_grid[i + (x_sum + 2)] = new_grid[i + (x_sum + 2)], new_grid[i]
-                new_node = create_child(curr_node, new_grid)
-                curr_node.children.append(new_node)
+                if not new_grid[i] == 'x' \
+                   and not new_grid[i + (x_sum + 2)] == 'x':
+                    new_grid[i], new_grid[i + (x_sum + 2)] = new_grid[i + (x_sum + 2)], new_grid[i]
+                    new_node = create_child(curr_node, new_grid)
+                    curr_node.children.append(new_node)
 
             # move 7 - down 2, left 1
             if j < (y_sum - 1) \
                and k > 1:
                 new_grid = copy_list(frontier)
-                new_grid[i], new_grid[i + ((2 * x_sum) - 1)] = new_grid[i + ((2 * x_sum) - 1)], new_grid[i]
-                new_node = create_child(curr_node, new_grid)
-                curr_node.children.append(new_node)
+                if not new_grid[i] == 'x' \
+                   and not new_grid[i + ((2 * x_sum) - 1)] == 'x':
+                    new_grid[i], new_grid[i + ((2 * x_sum) - 1)] = new_grid[i + ((2 * x_sum) - 1)], new_grid[i]
+                    new_node = create_child(curr_node, new_grid)
+                    curr_node.children.append(new_node)
 
             # move 8 - down 1, left 2
             if j < y_sum \
                and k > 2:
                 new_grid = copy_list(frontier)
-                new_grid[i], new_grid[i + (x_sum - 2)] = new_grid[i + (x_sum - 2)], new_grid[i]
-                new_node = create_child(curr_node, new_grid)
-                curr_node.children.append(new_node)
+                if not new_grid[i] == 'x' \
+                   and not new_grid[i + (x_sum - 2)] == 'x':
+                    new_grid[i], new_grid[i + (x_sum - 2)] = new_grid[i + (x_sum - 2)], new_grid[i]
+                    new_node = create_child(curr_node, new_grid)
+                    curr_node.children.append(new_node)
 
         # iterate x and y axis markers
         if k == x_sum:
@@ -273,7 +289,7 @@ def breadth_first():
             if not path_exists(path_to_goal, each_node):
                 out_of_place = heuristic_1(each_node.state, blank_tiles)
                 if cheapest == 0 \
-                        or out_of_place < cheapest:
+                   or out_of_place < cheapest:
                     cheapest = out_of_place
                     curr_node = each_node  # current node now has cheapest run time at it's depth
 
@@ -282,6 +298,7 @@ def breadth_first():
         node = curr_node  # get successors / fringe from the cheapest node at this state
 
     print '\nBreadth-first search chosen'
+    print 'Total number of moves: ' + str(node.depth)
     return path_to_goal
 
 
@@ -308,29 +325,92 @@ def depth_first():
         if not path_exists(path_to_goal, curr_node):
             already_processed = False
             path_to_goal.append(curr_node)
-            node = curr_node  # use this current node to get it's successors / fringe
+
+        node = curr_node  # use this current node to get it's successors / fringe
 
     print '\nDepth-first search chosen'
     return path_to_goal
 
 
+def a_star():
+    grid, x_sum, y_sum, blank_tiles = initiate_grid()
+    print grid[0], grid[1],
+    print grid[2], grid[3],
+    print grid[4], grid[5], '\n'
+
+    node = Node()
+    node.state = grid
+
+    path_to_goal = list()
+    closed = list()
+    transplanted = list()
+    path_to_goal.append(node)
+
+    while not node.is_at_goal(blank_tiles):
+        # initialize the root state and create a new root node with that state
+        node = successor_processing(node, x_sum, y_sum)
+
+        # save the slowest run_time across bridge
+        cheapest = 0
+        curr_node = Node()
+        for each_node in node.children:
+            if not path_exists(path_to_goal, each_node):
+                out_of_place = heuristic_1(each_node.state, blank_tiles)
+                if cheapest == 0 \
+                        or out_of_place < cheapest:
+                    cheapest = out_of_place
+                    curr_node = each_node  # current node now has cheapest run time at it's depth
+
+        for each_node in node.children:
+            cost = heuristic_1(each_node.state, blank_tiles)
+            if not each_node.state == curr_node.state:
+                each_node.heuristic_value = cost
+                closed.append(each_node)
+            else:
+                curr_node.heuristic_value = cost
+
+        transplant = False
+        scope_changes = 0
+        if path_exists(closed, curr_node):
+            for closed_node in closed:
+                if closed_node.state == curr_node.state \
+                   and closed_node.heuristic_value <= curr_node.heuristic_value \
+                   and closed_node.depth < curr_node.depth\
+                   and closed_node.state not in transplanted\
+                   and curr_node.state not in transplanted:
+                    i = closed_node.depth
+                    path_to_goal = path_to_goal[:i]
+                    path_to_goal.append(closed_node)
+                    transplant = True
+                    transplanted.append(closed_node.state)
+                    transplanted.append(curr_node.state)
+                    scope_changes += 1
+                    break
+
+        if not transplant:
+            # append the node with the cheapest crossing time to the final path to the goal state
+            path_to_goal.append(curr_node)
+
+        node = path_to_goal[-1]  # get successors / fringe from the cheapest node at this state
+
+    print '\nA star search chosen'
+    print 'Total number of moves: ' + str(node.depth)
+    print 'Total number of transplants of children (changes of scope): ' + str(scope_changes)
+    return path_to_goal
+
+
 def print_path(path):
     for node in path:
-        print node.state[0], node.state[1], node.state[2]
-        print node.state[3], node.state[4], node.state[5]
-        print node.state[6], node.state[7], node.state[8], '\n'
+        print node.state[0], node.state[1],
+        print node.state[2], node.state[3],
+        print node.state[4], node.state[5], '\n'
 
 
 # to be called at top level
 def main():
-    path = breadth_first()
+    path = a_star()
     print_path(path)
-    # node = Node()
-    #
-    # x = ['x', 1, 2, 3, 4, 5, 6, 7, 8]
-    # node.state = x
-    # print node.is_at_goal(1)
-    # print heuristic_1(x, 1)
+
 
 # top level code
 if __name__ == '__main__':
