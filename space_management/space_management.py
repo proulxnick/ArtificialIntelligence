@@ -452,6 +452,7 @@ def print_path(path, x_sum, y_sum):
                 i = 1
             j += 1
         print '\n'
+        # test
 
 
 # to be called at top level
