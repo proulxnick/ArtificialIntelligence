@@ -93,7 +93,7 @@ def path_exists(path_list, new_node):
 
 def heuristic_1(children):
     # the goal of this heuristic function is to return the node in the
-    # list passed in that has the slowest overall runtime
+    # list passed in that has the slowest overall runtime added to it's depth
     cheapest_node = children[0]
     for node in children:
         if node.state.run_time < cheapest_node.state.run_time:
@@ -102,10 +102,18 @@ def heuristic_1(children):
     return cheapest_node
 
 
-def heuristic_2():
+def heuristic_2(children):
     # the goal of this heuristic function is to add the runtime of each
     # node to its depth and return the cheapest option
-    pass
+    for node in children:
+        node.heuristic_value = node.depth + node.state.run_time
+
+    cheapest_node = children[0]
+    for node in children:
+        if node.heuristic_value < cheapest_node.heuristic_value:
+            cheapest_node = node
+
+    return cheapest_node
 
 
 def successor_processing(state, old_node, left_runners, right_runners):

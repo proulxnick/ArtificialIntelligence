@@ -1,6 +1,12 @@
 import random
 
 
+class BadStateException(Exception):
+
+    def __init__(self, message):
+        self.message = message
+
+
 class Node:
 
     def __init__(self):
@@ -78,7 +84,7 @@ def heuristic_1(grid, blank_tiles):
 
 
 def heuristic_2(grid, blank_tiles):
-    # get the lowest distance every tile is from it's endpoint and return it
+    # get the cumulative distance every tile is from it's endpoint and return it
 
     total_distance = 0
     for tile in grid:
@@ -99,15 +105,26 @@ def heuristic_2(grid, blank_tiles):
 def initiate_grid():
     # get the user to specify the grid size and number of tiles
 
+    valid = False
+    x_sum = 0
+    y_sum = 0
+    blank_tiles = 0
+    total = 0
     print "Enter the X and Y coordinates to make up the grid size (e.g X=3 and Y=3 for a 3x3 grid matrix)"
-    x_sum = input("X coordinates: ")
-    y_sum = input("Y coordinates: ")
+    while not valid:
+        x_sum = input("X coordinates: ")
+        y_sum = input("Y coordinates: ")
 
-    print '\n'
+        print '\n'
 
-    blank_tiles = input("Enter number of blank spaces in the grid: ")
-
-    total = x_sum * y_sum
+        blank_tiles = input("Enter number of blank spaces in the grid: ")
+        total = x_sum * y_sum
+        if x_sum > 1 \
+           and y_sum > 1 \
+           and blank_tiles <= total:
+            valid = True
+        else:
+            print 'You must have an X and Y axis greater than 1, and a valid number of blank tiles - try again'
 
     i = 1
     k = 1
@@ -218,7 +235,7 @@ def successor_processing(curr_node, x_sum, y_sum):
                 new_node = create_child(curr_node, new_grid)
                 curr_node.children.append(new_node)
 
-        else:  # is an integer tile - 8 possible moves
+        elif not curr_tile == 'x':  # is an integer tile - 8 possible moves
             # move 1 - up 2, left 1
             if j > 2 \
                and k > 1:
@@ -328,7 +345,7 @@ def breadth_first():
         curr_node = Node()
         for each_node in node.children:
             if not path_exists(path_to_goal, each_node):
-                out_of_place = heuristic_2(each_node.state, blank_tiles)
+                out_of_place = heuristic_1(each_node.state, blank_tiles)
                 if cheapest == 0 \
                    or out_of_place < cheapest:
                     cheapest = out_of_place
@@ -345,15 +362,14 @@ def breadth_first():
 
 def depth_first():
     grid, x_sum, y_sum, blank_tiles = initiate_grid()
-    print grid[0], grid[1], grid[2]
-    print grid[3], grid[4], grid[5]
-    print grid[6], grid[7], grid[8], '\n'
 
     path_to_goal = list()
     node = Node()
     node.state = grid
+    node.heuristic_value = heuristic_1(node.state, blank_tiles)
     path_to_goal.append(node)
     stack = list()  # use a stack for dfs
+    visited = list()
     already_processed = False
 
     while not node.is_at_goal(blank_tiles):
@@ -363,13 +379,23 @@ def depth_first():
             stack.extend(node.children)  # add the children to the top of the stack
 
         curr_node = stack.pop()  # take the latest child addition as current node
-        if not path_exists(path_to_goal, curr_node):
+        out_of_place = heuristic_1(curr_node.state, blank_tiles)
+        curr_node.heuristic_value = out_of_place
+        if not path_exists(path_to_goal, curr_node) \
+           and curr_node.heuristic_value <= path_to_goal[-1].heuristic_value \
+           and not path_exists(visited, curr_node):
             already_processed = False
             path_to_goal.append(curr_node)
+            visited.append(node)
 
-        node = curr_node  # use this current node to get it's successors / fringe
+        if len(stack) > 1:
+            node = curr_node  # use this current node to get it's successors / fringe
+        elif len(stack) <= 1 and not node.is_at_goal(blank_tiles):
+            path_to_goal = path_to_goal[:1]
+            node = path_to_goal[-1]
 
     print '\nDepth-first search chosen'
+    print 'Total number of moves: ' + str(node.depth)
     return path_to_goal, x_sum, y_sum
 
 
@@ -393,14 +419,14 @@ def a_star():
         curr_node = Node()
         for each_node in node.children:
             if not path_exists(path_to_goal, each_node):
-                out_of_place = heuristic_2(each_node.state, blank_tiles)
+                out_of_place = heuristic_1(each_node.state, blank_tiles)
                 if cheapest == 0 \
                         or out_of_place < cheapest:
                     cheapest = out_of_place
                     curr_node = each_node  # current node now has cheapest run time at it's depth
 
         for each_node in node.children:
-            cost = heuristic_2(each_node.state, blank_tiles)
+            cost = heuristic_1(each_node.state, blank_tiles)
             if not each_node.state == curr_node.state:
                 each_node.heuristic_value = cost
                 closed.append(each_node)
@@ -452,14 +478,13 @@ def print_path(path, x_sum, y_sum):
                 i = 1
             j += 1
         print '\n'
-        # test
 
 
 # to be called at top level
 def main():
     # path, x, y = breadth_first()
-    path, x, y = a_star()
-    # path, x, y = depth_first()
+    # path, x, y = a_star()
+    path, x, y = depth_first()
     print_path(path, x, y)
 
 
