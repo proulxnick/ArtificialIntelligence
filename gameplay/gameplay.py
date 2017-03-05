@@ -21,7 +21,7 @@ class Node:
 def initiate_board():
     board = list()
     options = ['red', 'green']
-    forbidden_indexes = [1, 2, 3, 4, 11, 18, 19, 26, 26,
+    forbidden_indexes = [1, 2, 3, 4, 11, 18, 19, 26, 27,
                          34, 35, 42, 49, 50, 51, 52]
     i = 1
     j = 0  # number of red game pieces used
@@ -47,17 +47,23 @@ def initiate_board():
                 board.append(game_piece)
                 k += 1
         i += 1
-    for piece in board:
-        print piece.color
+    return board
 
 
 def print_board(board):
-    pass
+    x_sums = [4, 10, 18, 26, 34, 42, 48]
+    i = 1
+    for piece in board:
+        print piece.color,
+        if i in x_sums:
+            print ''
+        i += 1
 
 
 # to be called at top level
 def main():
-    initiate_board()
+    board = initiate_board()
+    print_board(board)
 
 # top level code
 if __name__ == '__main__':
