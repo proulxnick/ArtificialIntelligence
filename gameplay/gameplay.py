@@ -50,6 +50,20 @@ def initiate_board():
     return board
 
 
+def copy_list(old_list):
+    # used to copy contents of one list and create another list
+
+    new_list = list()
+    for i in old_list:
+        new_list.append(i)
+
+    return new_list
+
+
+def successor_processing(board):
+    pass
+
+
 def print_board(board):
     x_sums = [4, 10, 18, 26, 34, 42, 48]
     i = 1
