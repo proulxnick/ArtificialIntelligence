@@ -6,7 +6,7 @@ class GamePiece:
 
     def __init__(self):
         self.height = 0  # for the number of pieces stacked
-        self.color = 'empty'
+        self.color = '0'
 
 
 class Node:
@@ -22,7 +22,7 @@ class Node:
 
 def initiate_board():
     board = list()
-    options = ['red', 'green']
+    options = ['1', '2']
     forbidden_indexes = [1, 2, 3, 4, 11, 18, 19, 26, 27,
                          34, 35, 42, 49, 50, 51, 52]
     i = 1
@@ -34,18 +34,18 @@ def initiate_board():
             board.append(game_piece)
         else:
             color = random.choice(options)  # random choice of red or green piece to randomize the initial state
-            if color == 'red' and not j >= 18 \
-               or color == 'green' and k >= 18:
+            if color == '1' and not j >= 18 \
+               or color == '2' and k >= 18:
                 game_piece = GamePiece()  # create game piece and append it to list
                 game_piece.height = 1
-                game_piece.color = 'red'
+                game_piece.color = '1'
                 board.append(game_piece)
                 j += 1
-            elif color == 'green' and not k >= 18 \
-                    or color == 'red' and j >= 18:
+            elif color == '2' and not k >= 18 \
+                    or color == '1' and j >= 18:
                 game_piece = GamePiece()  # create game piece and append it to list
                 game_piece.height = 1
-                game_piece.color = 'green'
+                game_piece.color = '2'
                 board.append(game_piece)
                 k += 1
         i += 1
@@ -53,25 +53,25 @@ def initiate_board():
     green = 0
     red = 0
     for i in board:
-        if i.color == 'green':
+        if i.color == '2':
             green += 1
-        elif i.color == 'red':
+        elif i.color == '1':
             red += 1
 
     if green > 18:
         diff = green - 18
         x = 0
         for tile in board:
-            if tile.color == 'green' and not x > diff:
-                tile.color = 'red'
+            if tile.color == '2' and not x > diff:
+                tile.color = '1'
             x += 1
 
     elif red > 18:
         diff = red - 18
         x = 0
         for tile in board:
-            if tile.color == 'red' and not x > diff:
-                tile.color = 'green'
+            if tile.color == '1' and not x > diff:
+                tile.color = '2'
             x += 1
 
     return board
@@ -227,7 +227,7 @@ def print_board(board):
     x_sums = [4, 10, 18, 26, 34, 42, 48]
     i = 1  # for x axis
     j = 1  # for y axis
-    print '  ',
+    print '   ',
     for piece in board:
         print piece.color,
         if i in x_sums:
@@ -238,19 +238,22 @@ def print_board(board):
             if j == 2 or j == 7:
                 print ' ',
             if j == 8:
-                print '  ',
+                print '   ',
         i += 1
 
 
 # to be called at top level
 def main():
+    print '\n\nThe initial board state is:\n'
     board = initiate_board()
+    print '_______________\n'
     print_board(board)
+    print '\n_______________'
 
     root = Node()
     root.state = board
 
-    new_node = successor_processing('green', root)
+    new_node = successor_processing('1', root)
     for node in new_node.children:
         print '\n'
         print_board(node.state)
