@@ -88,21 +88,21 @@ def copy_list(old_list):
 
 
 # 'player' is a string denoting the color of the current player making a move at this instance
-def successor_processing(board, player, node):
+def successor_processing(player, node):
     json_path = 'C:\Users\Nick\PycharmProjects\ArtificialIntelligence\index_config\index_config.json'
     with open(json_path) as data_file:
         indexing_params = json.load(data_file)
-    x_sums = [4, 10, 18, 26, 34, 42, 48]
-    y_sums = [1, 5, 11, 19, 27, 35, 43, 49]
+
     i = 0  # indexing value
-    for piece in board:
-        if not piece.color == 'None':
+    for piece in node.state:
+        if piece.color == player:
             stack = piece.height  # for control - need to make multiple moves with stacks while splitting the stack
-            while stack > 0:  # move N, S, E, or W all possible combos
-                # move up
-                new_board = copy_list(board)
-                move_up_index = indexing_params["indexes"][str(i + 1)]["up"][str(stack)]
-                sum_stack_heights = stack + int(new_board[int(move_up_index) - 1].height)
+
+            # move up
+            while stack > 0:
+                new_board = copy_list(node.state)
+                move_index = indexing_params["indexes"][str(i + 1)]["up"][str(stack)]
+                sum_stack_heights = stack + int(new_board[int(move_index) - 1].height)
                 difference = 0  # will be number of pieces captured in a move
                 if sum_stack_heights > 5:
                     difference = sum_stack_heights - 5
@@ -115,7 +115,7 @@ def successor_processing(board, player, node):
                 empty_game_piece = GamePiece()
 
                 new_board[i] = empty_game_piece
-                new_board[int(move_up_index)] = game_piece
+                new_board[int(move_index) - 1] = game_piece
 
                 # create new node and save the board as state and difference as number of pieces captured
                 new_node = Node()
@@ -125,9 +125,102 @@ def successor_processing(board, player, node):
                 new_node.depth = node.depth + 1
 
                 node.children.append(new_node)
+                stack -= 1
 
+            stack = piece.height  # for control - need to make multiple moves with stacks while splitting the stack
+
+            # move down
+            while stack > 0:
+                new_board = copy_list(node.state)
+                move_index = indexing_params["indexes"][str(i + 1)]["down"][str(stack)]
+                sum_stack_heights = stack + int(new_board[int(move_index) - 1].height)
+                difference = 0  # will be number of pieces captured in a move
+                if sum_stack_heights > 5:
+                    difference = sum_stack_heights - 5
+                    sum_stack_heights = 5
+
+                # create new game piece and place on board
+                game_piece = GamePiece()
+                game_piece.color = piece.color
+                game_piece.height = sum_stack_heights
+                empty_game_piece = GamePiece()
+
+                new_board[i] = empty_game_piece
+                new_board[int(move_index) - 1] = game_piece
+
+                # create new node and save the board as state and difference as number of pieces captured
+                new_node = Node()
+                new_node.state = new_board
+                new_node.pieces_captured = difference
+                new_node.parent = node
+                new_node.depth = node.depth + 1
+
+                node.children.append(new_node)
+                stack -= 1
+
+            stack = piece.height  # for control - need to make multiple moves with stacks while splitting the stack
+
+            # move left
+            while stack > 0:
+                new_board = copy_list(node.state)
+                move_index = indexing_params["indexes"][str(i + 1)]["left"][str(stack)]
+                sum_stack_heights = stack + int(new_board[int(move_index) - 1].height)
+                difference = 0  # will be number of pieces captured in a move
+                if sum_stack_heights > 5:
+                    difference = sum_stack_heights - 5
+                    sum_stack_heights = 5
+
+                # create new game piece and place on board
+                game_piece = GamePiece()
+                game_piece.color = piece.color
+                game_piece.height = sum_stack_heights
+                empty_game_piece = GamePiece()
+
+                new_board[i] = empty_game_piece
+                new_board[int(move_index) - 1] = game_piece
+
+                # create new node and save the board as state and difference as number of pieces captured
+                new_node = Node()
+                new_node.state = new_board
+                new_node.pieces_captured = difference
+                new_node.parent = node
+                new_node.depth = node.depth + 1
+
+                node.children.append(new_node)
+                stack -= 1
+
+            stack = piece.height  # for control - need to make multiple moves with stacks while splitting the stack
+
+            # move right
+            while stack > 0:
+                new_board = copy_list(node.state)
+                move_index = indexing_params["indexes"][str(i + 1)]["right"][str(stack)]
+                sum_stack_heights = stack + int(new_board[int(move_index) - 1].height)
+                difference = 0  # will be number of pieces captured in a move
+                if sum_stack_heights > 5:
+                    difference = sum_stack_heights - 5
+                    sum_stack_heights = 5
+
+                # create new game piece and place on board
+                game_piece = GamePiece()
+                game_piece.color = piece.color
+                game_piece.height = sum_stack_heights
+                empty_game_piece = GamePiece()
+
+                new_board[i] = empty_game_piece
+                new_board[int(move_index) - 1] = game_piece
+
+                # create new node and save the board as state and difference as number of pieces captured
+                new_node = Node()
+                new_node.state = new_board
+                new_node.pieces_captured = difference
+                new_node.parent = node
+                new_node.depth = node.depth + 1
+
+                node.children.append(new_node)
                 stack -= 1
         i += 1
+    return node
 
 
 def print_board(board):
@@ -151,12 +244,16 @@ def print_board(board):
 
 # to be called at top level
 def main():
-    json_path = 'C:\Users\Nick\PycharmProjects\ArtificialIntelligence\index_config\index_config.json'
-    with open(json_path) as data_file:
-        indexing_params = json.load(data_file)
-    # x = str(indexing_params["indexes"]["1"]["hi"])
     board = initiate_board()
     print_board(board)
+
+    root = Node()
+    root.state = board
+
+    new_node = successor_processing('green', root)
+    for node in new_node.children:
+        print '\n'
+        print_board(node.state)
 
 # top level code
 if __name__ == '__main__':
