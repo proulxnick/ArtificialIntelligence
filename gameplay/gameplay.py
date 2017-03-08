@@ -49,6 +49,31 @@ def initiate_board():
                 board.append(game_piece)
                 k += 1
         i += 1
+
+    green = 0
+    red = 0
+    for i in board:
+        if i.color == 'green':
+            green += 1
+        elif i.color == 'red':
+            red += 1
+
+    if green > 18:
+        diff = green - 18
+        x = 0
+        for tile in board:
+            if tile.color == 'green' and not x > diff:
+                tile.color = 'red'
+            x += 1
+
+    elif red > 18:
+        diff = red - 18
+        x = 0
+        for tile in board:
+            if tile.color == 'red' and not x > diff:
+                tile.color = 'green'
+            x += 1
+
     return board
 
 
@@ -63,39 +88,64 @@ def copy_list(old_list):
 
 
 # 'player' is a string denoting the color of the current player making a move at this instance
-def successor_processing(board, player):
+def successor_processing(board, player, node):
     json_path = 'C:\Users\Nick\PycharmProjects\ArtificialIntelligence\index_config\index_config.json'
     with open(json_path) as data_file:
         indexing_params = json.load(data_file)
     x_sums = [4, 10, 18, 26, 34, 42, 48]
     y_sums = [1, 5, 11, 19, 27, 35, 43, 49]
-
     i = 0  # indexing value
-    j = 1  # corresponding x-axis value
-    k = 1  # corresponding y-axis value
     for piece in board:
-        if piece.color == 'empty':
-            continue
-        elif piece.color == 'green':
+        if not piece.color == 'None':
             stack = piece.height  # for control - need to make multiple moves with stacks while splitting the stack
-            while stack > 0:
-                # move up for all possible stack sizes
-                if stack == 5 and k == 6 \
-                   and 7 > j > 2 \
-                   or stack == 5 and k == 7 \
-                   or stack == 5 and k == 8:
-                    game_piece = GamePiece()
-                    game_piece.color = 'green'
-                    game_piece.height = stack
+            while stack > 0:  # move N, S, E, or W all possible combos
+                # move up
+                new_board = copy_list(board)
+                move_up_index = indexing_params["indexes"][str(i + 1)]["up"][str(stack)]
+                sum_stack_heights = stack + int(new_board[int(move_up_index) - 1].height)
+                difference = 0  # will be number of pieces captured in a move
+                if sum_stack_heights > 5:
+                    difference = sum_stack_heights - 5
+                    sum_stack_heights = 5
+
+                # create new game piece and place on board
+                game_piece = GamePiece()
+                game_piece.color = piece.color
+                game_piece.height = sum_stack_heights
+                empty_game_piece = GamePiece()
+
+                new_board[i] = empty_game_piece
+                new_board[int(move_up_index)] = game_piece
+
+                # create new node and save the board as state and difference as number of pieces captured
+                new_node = Node()
+                new_node.state = new_board
+                new_node.pieces_captured = difference
+                new_node.parent = node
+                new_node.depth = node.depth + 1
+
+                node.children.append(new_node)
+
+                stack -= 1
+        i += 1
 
 
 def print_board(board):
     x_sums = [4, 10, 18, 26, 34, 42, 48]
-    i = 1
+    i = 1  # for x axis
+    j = 1  # for y axis
+    print '  ',
     for piece in board:
         print piece.color,
         if i in x_sums:
             print ''
+
+        if i in x_sums:
+            j += 1
+            if j == 2 or j == 7:
+                print ' ',
+            if j == 8:
+                print '  ',
         i += 1
 
 
@@ -104,7 +154,7 @@ def main():
     json_path = 'C:\Users\Nick\PycharmProjects\ArtificialIntelligence\index_config\index_config.json'
     with open(json_path) as data_file:
         indexing_params = json.load(data_file)
-    x = str(indexing_params["indexes"]["1"]["hi"])
+    # x = str(indexing_params["indexes"]["1"]["hi"])
     board = initiate_board()
     print_board(board)
 
