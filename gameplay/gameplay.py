@@ -3,6 +3,12 @@ import json
 import sys
 
 
+class InvalidMoveException(Exception):
+
+    def __init__(self, message):
+        self.message = message
+
+
 class GamePiece:
 
     def __init__(self):
@@ -19,6 +25,7 @@ class Node:
         self.children = list()  # to be used to create possible child nodes dynamically and append to list
         self.heuristic_value = 0
         self.pieces_captured = 0  # will be determined by # of left over pieces between 2 stacks > 5
+        self.min_max_value = 0
 
 
 def initiate_board():
@@ -225,6 +232,126 @@ def successor_processing(player, node):
     return node  # this node will hold all the new states created for all of it's child nodes
 
 
+def min_play(node):
+    if node.pieces_captured >= 8:
+        return node.state, node.player
+    new_node = successor_processing('2', node)
+    moves = new_node.children
+    best_score = float('inf')
+    best_move = None
+    for move in moves:
+        next_state = move.state
+        score = max_play(next_state)
+        if score < best_score:
+            best_move = move
+            best_score = score
+
+    if best_move is None:
+        raise InvalidMoveException('No possible move -- Exiting')
+    else:
+        return best_move
+
+
+def max_play(node):
+    if node.pieces_captured >= 8:
+        return node.state, node.player
+    new_node = successor_processing('2', node)
+    moves = new_node.children
+    best_score = float('-inf')
+    best_move = None
+    for move in moves:
+        next_state = move.state
+        score = min_play(next_state)
+        if score > best_score:
+            best_move = move
+            best_score = score
+
+    if best_move is None:
+        raise InvalidMoveException('No possible move -- Exiting')
+    else:
+        return best_move
+
+
+def min_max_heuristic(board):
+    count = 0
+
+    for piece in board:
+        if piece.player == '1':
+            count += 1
+
+    return count
+
+
+def count_player_pieces(board):
+    player_1 = 0
+    player_2 = 0
+    for piece in board:
+        if piece.player == '1':
+            player_1 += 1
+        elif piece.player == '2':
+            player_2 += 1
+
+    return player_1, player_2
+
+
+def min_max(node):
+    path_to_goal = list()
+    # stack = list()
+    # node = Node()
+    path_to_goal.append(node)
+    total_captured = node.pieces_captured
+    player_1_total = 18
+    player_2_total = 18
+    winner = ''
+    total_moves = 0
+
+    i = 0
+    while not total_captured >= 6 and player_1_total > 0 and player_2_total > 0:
+        if i % 2 == 0:
+            new_node = successor_processing('2', node)
+            player = '2'
+        else:
+            new_node = successor_processing('1', node)
+            player = '1'
+
+        for node in new_node.children:
+            node.heuristic_value = min_max_heuristic(node.state)
+
+        alpha = float('inf')
+        beta = float('-inf')
+
+        if player == '1':  # this is the max -- use the beta value
+            for node in new_node.children:
+                if node.heuristic_value > beta:  # max
+                    beta = node.heuristic_value
+        else:
+            for node in new_node.children:
+                if node.heuristic_value < alpha:  # min
+                    alpha = node.heuristic_value
+
+        if alpha == float('inf'):
+            new_node.min_max_value = beta
+        else:
+            new_node.min_max_value = alpha
+
+        for node in new_node.children:
+            if node.heuristic_value == new_node.min_max_value:
+                path_to_goal.append(node)
+                total_captured += node.pieces_captured
+                player_1_total, player_2_total = count_player_pieces(node.state)
+                total_moves = node.depth
+
+        node = path_to_goal[-1]
+        i += 1
+
+    if player_1_total == 0:
+        winner = 'Player 2'
+    elif player_2_total == 0:
+        winner = 'Player 1'
+
+    return path_to_goal, winner, total_moves
+
+
 def print_board(board):
     x_sums = [4, 10, 18, 26, 34, 42, 48]
     i = 1  # for x axis
@@ -244,6 +371,13 @@ def print_board(board):
         i += 1
 
 
+def print_path(path_to_goal):
+    for node in path_to_goal:
+        print '\n'
+        print_board(node.state)
+        print '\n'
+
+
 # to be called at top level
 def main():
     print '\n\nThe initial board state is:\n'
@@ -254,11 +388,10 @@ def main():
 
     root = Node()
     root.state = board
-
-    new_node = successor_processing('1', root)
-    for node in new_node.children:
-        print '\n'
-        print_board(node.state)
+    path_to_goal, winner, total_moves = min_max(root)
+    print_path(path_to_goal)
+    print '\nThe game is over, ' + winner + ' wins!'
+    print 'Total moves: ' + str(total_moves)
 
 # top level code
 if __name__ == '__main__':
