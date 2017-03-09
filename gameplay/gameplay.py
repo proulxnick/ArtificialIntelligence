@@ -1,12 +1,13 @@
 import random
 import json
+import sys
 
 
 class GamePiece:
 
     def __init__(self):
         self.height = 0  # for the number of pieces stacked
-        self.color = '0'
+        self.player = '0'  # denote an empty GamePiece by no player (a piece with player '0')
 
 
 class Node:
@@ -17,7 +18,7 @@ class Node:
         self.depth = 0
         self.children = list()  # to be used to create possible child nodes dynamically and append to list
         self.heuristic_value = 0
-        self.pieces_captured = 0
+        self.pieces_captured = 0  # will be determined by # of left over pieces between 2 stacks > 5
 
 
 def initiate_board():
@@ -33,45 +34,46 @@ def initiate_board():
             game_piece = GamePiece()  # create a generic empty board element
             board.append(game_piece)
         else:
-            color = random.choice(options)  # random choice of red or green piece to randomize the initial state
-            if color == '1' and not j >= 18 \
-               or color == '2' and k >= 18:
+            player = random.choice(options)  # random choice of red or green piece to randomize the initial state
+            if player == '1' and not j >= 18 \
+               or player == '2' and k >= 18:
                 game_piece = GamePiece()  # create game piece and append it to list
                 game_piece.height = 1
-                game_piece.color = '1'
+                game_piece.player = '1'
                 board.append(game_piece)
                 j += 1
-            elif color == '2' and not k >= 18 \
-                    or color == '1' and j >= 18:
+            elif player == '2' and not k >= 18 \
+                    or player == '1' and j >= 18:
                 game_piece = GamePiece()  # create game piece and append it to list
                 game_piece.height = 1
-                game_piece.color = '2'
+                game_piece.player = '2'
                 board.append(game_piece)
                 k += 1
         i += 1
 
+    # if the randomized board has extra of either player - swap until equal
     green = 0
     red = 0
     for i in board:
-        if i.color == '2':
+        if i.player == '2':
             green += 1
-        elif i.color == '1':
+        elif i.player == '1':
             red += 1
 
     if green > 18:
         diff = green - 18
         x = 0
         for tile in board:
-            if tile.color == '2' and not x > diff:
-                tile.color = '1'
+            if tile.player == '2' and not x > diff:
+                tile.player = '1'
             x += 1
 
     elif red > 18:
         diff = red - 18
         x = 0
         for tile in board:
-            if tile.color == '1' and not x > diff:
-                tile.color = '2'
+            if tile.player == '1' and not x > diff:
+                tile.player = '2'
             x += 1
 
     return board
@@ -87,7 +89,7 @@ def copy_list(old_list):
     return new_list
 
 
-# 'player' is a string denoting the color of the current player making a move at this instance
+# 'player' is a string denoting the current player making a move at this instance
 def successor_processing(player, node):
     json_path = 'C:\Users\Nick\PycharmProjects\ArtificialIntelligence\index_config\index_config.json'
     with open(json_path) as data_file:
@@ -95,7 +97,7 @@ def successor_processing(player, node):
 
     i = 0  # indexing value
     for piece in node.state:
-        if piece.color == player:
+        if piece.player == player:
             stack = piece.height  # for control - need to make multiple moves with stacks while splitting the stack
 
             # move up
@@ -110,7 +112,7 @@ def successor_processing(player, node):
 
                 # create new game piece and place on board
                 game_piece = GamePiece()
-                game_piece.color = piece.color
+                game_piece.player = piece.player
                 game_piece.height = sum_stack_heights
                 empty_game_piece = GamePiece()
 
@@ -141,7 +143,7 @@ def successor_processing(player, node):
 
                 # create new game piece and place on board
                 game_piece = GamePiece()
-                game_piece.color = piece.color
+                game_piece.player = piece.player
                 game_piece.height = sum_stack_heights
                 empty_game_piece = GamePiece()
 
@@ -172,7 +174,7 @@ def successor_processing(player, node):
 
                 # create new game piece and place on board
                 game_piece = GamePiece()
-                game_piece.color = piece.color
+                game_piece.player = piece.player
                 game_piece.height = sum_stack_heights
                 empty_game_piece = GamePiece()
 
@@ -203,7 +205,7 @@ def successor_processing(player, node):
 
                 # create new game piece and place on board
                 game_piece = GamePiece()
-                game_piece.color = piece.color
+                game_piece.player = piece.player
                 game_piece.height = sum_stack_heights
                 empty_game_piece = GamePiece()
 
@@ -220,7 +222,7 @@ def successor_processing(player, node):
                 node.children.append(new_node)
                 stack -= 1
         i += 1
-    return node
+    return node  # this node will hold all the new states created for all of it's child nodes
 
 
 def print_board(board):
@@ -229,7 +231,7 @@ def print_board(board):
     j = 1  # for y axis
     print '   ',
     for piece in board:
-        print piece.color,
+        print piece.player,
         if i in x_sums:
             print ''
 
@@ -248,7 +250,7 @@ def main():
     board = initiate_board()
     print '_______________\n'
     print_board(board)
-    print '\n_______________'
+    print '\n_______________\n'
 
     root = Node()
     root.state = board
