@@ -306,7 +306,8 @@ def min_max(node):
     total_moves = 0
 
     i = 0
-    while not total_captured >= 6 and player_1_total > 0 and player_2_total > 0:
+    # total_captured >= 18
+    while player_1_total > 0 and player_2_total > 0:
         if i % 2 == 0:
             new_node = successor_processing('2', node)
             player = '2'
@@ -340,16 +341,17 @@ def min_max(node):
                 total_captured += node.pieces_captured
                 player_1_total, player_2_total = count_player_pieces(node.state)
                 total_moves = node.depth
+                break
 
         node = path_to_goal[-1]
         i += 1
 
-    if player_1_total == 0:
-        winner = 'Player 2'
-    elif player_2_total == 0:
+    if player_1_total > player_2_total:
         winner = 'Player 1'
+    else:
+        winner = 'Player 2'
 
-    return path_to_goal, winner, total_moves
+    return path_to_goal, winner, total_moves, total_captured
 
 
 def print_board(board):
@@ -388,10 +390,11 @@ def main():
 
     root = Node()
     root.state = board
-    path_to_goal, winner, total_moves = min_max(root)
+    path_to_goal, winner, total_moves, total_captures = min_max(root)
     print_path(path_to_goal)
     print '\nThe game is over, ' + winner + ' wins!'
     print 'Total moves: ' + str(total_moves)
+    print 'Total captures ' + str(total_captures)
 
 # top level code
 if __name__ == '__main__':
