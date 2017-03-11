@@ -327,6 +327,29 @@ def min_max(node):
     return path_to_goal, winner, total_moves, total_captured
 
 
+def mini_max(node):
+    board = node.state
+    player_1_total = 0
+    player_2_total = 0
+    winner = None
+
+    depth = 0
+    while depth <= 4:
+        while player_1_total > 0 and player_2_total > 0:
+            if depth % 2 == 0:
+                new_node = successor_processing('2', node)
+                player = '2'
+            else:
+                new_node = successor_processing('1', node)
+                player = '1'
+
+            for child in new_node.children:
+                if player == '1':
+                    new_child_node = successor_processing('2', child)
+                else:
+                    new_child_node = successor_processing('1', child)
+
+
 def print_board(board):
     x_sums = [4, 10, 18, 26, 34, 42, 48]
     i = 1  # for x axis
