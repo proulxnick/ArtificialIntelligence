@@ -28,61 +28,34 @@ class Node:
         self.min_max_value = 0
 
 
-def initiate_board():
+def start_game():
     board = list()
     options = ['1', '2']
     forbidden_indexes = [1, 2, 3, 4, 11, 18, 19, 26, 27,
                          34, 35, 42, 49, 50, 51, 52]
-    i = 1
-    j = 0  # number of red game pieces used
-    k = 0  # number of green game pieces used
+
+    i = 1  # index
+    j = 0
+    k = 1
     while i <= 52:
-        if i in forbidden_indexes:
-            game_piece = GamePiece()  # create a generic empty board element
+        if i not in forbidden_indexes:
+            game_piece = GamePiece()
+            game_piece.player = options[j]
+            game_piece.height = 1
             board.append(game_piece)
-        else:
-            player = random.choice(options)  # random choice of red or green piece to randomize the initial state
-            if player == '1' and not j >= 18 \
-               or player == '2' and k >= 18:
-                game_piece = GamePiece()  # create game piece and append it to list
-                game_piece.height = 1
-                game_piece.player = '1'
-                board.append(game_piece)
-                j += 1
-            elif player == '2' and not k >= 18 \
-                    or player == '1' and j >= 18:
-                game_piece = GamePiece()  # create game piece and append it to list
-                game_piece.height = 1
-                game_piece.player = '2'
-                board.append(game_piece)
+            if k == 2 and j == 1:
+                j = 0
+                k = 1
+            elif k == 2 and j == 0:
+                j = 1
+                k = 1
+            else:
                 k += 1
+        else:
+            game_piece = GamePiece()
+            board.append(game_piece)
+
         i += 1
-
-    # if the randomized board has extra of either player - swap until equal
-    green = 0
-    red = 0
-    for i in board:
-        if i.player == '2':
-            green += 1
-        elif i.player == '1':
-            red += 1
-
-    if green > 18:
-        diff = green - 18
-        x = 0
-        for tile in board:
-            if tile.player == '2' and not x > diff:
-                tile.player = '1'
-            x += 1
-
-    elif red > 18:
-        diff = red - 18
-        x = 0
-        for tile in board:
-            if tile.player == '1' and not x > diff:
-                tile.player = '2'
-            x += 1
-
     return board
 
 
@@ -383,7 +356,7 @@ def print_path(path_to_goal):
 # to be called at top level
 def main():
     print '\n\nThe initial board state is:\n'
-    board = initiate_board()
+    board = start_game()
     print '_______________\n'
     print_board(board)
     print '\n_______________\n'
