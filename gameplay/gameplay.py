@@ -245,6 +245,17 @@ def max_play(node):
         return best_move
 
 
+def minimum_heuristic(node):
+    count = 0
+
+    for piece in node.state:
+        if piece.player == '1':
+            count += 1
+    count += node.pieces_captured
+
+    return count
+
+
 def max_heuristic(node):
     count = 0
 
@@ -271,6 +282,14 @@ def count_player_pieces(board):
             player_2 += 1
 
     return player_1, player_2
+
+
+def is_new_state(new, old):
+    is_new = True
+    for node in old:
+        if node.state == new.state:
+            is_new = False
+    return is_new
 
 
 def min_max(node):
@@ -338,10 +357,15 @@ def mini_max(node):
     player_1_total = 0
     player_2_total = 0
     winner = None
+    player_1 = 18
+    player_2 = 18
     path_to_goal = list()
+    player = ''
 
     depth = 0
-    while depth <= 4:
+    total = 1
+    while player_1 > 0 and player_2 > 0:
+        i = 1
         if depth % 2 == 0:
             new_node = successor_processing('2', node)
             player = '2'
@@ -351,7 +375,8 @@ def mini_max(node):
 
         random.shuffle(new_node.children)
 
-        i = 1
+        maximum = float('inf')
+        minimum = float('-inf')
         while i <= 3:
             for child in new_node.children:
                 if player == '1':
@@ -361,11 +386,9 @@ def mini_max(node):
                     new_child_node = successor_processing('1', child)
                     random.shuffle(new_child_node.children)
 
-            maximum = float('inf')
-            minimum = float('-inf')
             for node in new_node.children:
                 if depth % 2 == 0:
-                    node.heuristic_value = min_heuristic(new_node, node)
+                    node.heuristic_value = minimum_heuristic(node)
                     if node.heuristic_value > minimum:
                         maximum = node.heuristic_value
                 else:
@@ -375,17 +398,34 @@ def mini_max(node):
             i += 1
 
         for node in new_node.children:
-            if depth % 2 == 0 and node.heuristic_value == maximum:
+            is_new = is_new_state(node, path_to_goal)
+            if depth % 2 == 0 and node.heuristic_value == maximum and is_new:
                 path_to_goal.append(node)
+                # print_board(node.state)
+                # print '\n'
+                player_2_total += node.pieces_captured
+                # input('Continue? 1/0')
                 break
-            elif node.heuristic_value == minimum:
+            elif node.heuristic_value == minimum and is_new:
                 path_to_goal.append(node)
+                # print_board(node.state)
+                # print '\n'
+                player_1_total += node.pieces_captured
+                # input('Continue? 1/0')
                 break
 
+        player_1, player_2 = count_player_pieces(path_to_goal[-1].state)
         depth += 1
-    return path_to_goal
+        if player_1_total >= 2 \
+           or player_2_total >= 2:
+            break
 
-    print 'breakpoint'
+    if player == '1':
+        winner = 'Player 1'
+    else:
+        winner = 'Player 2'
+
+    return path_to_goal, winner
 
 
 def print_board(board):
@@ -424,8 +464,9 @@ def main():
 
     root = Node()
     root.state = board
-    path = mini_max(root)
+    path, winner = mini_max(root)
     print_path(path)
+    print '\nthe winner is: ' + winner
 
     # path_to_goal, winner, total_moves, total_captures = min_max(root)
     # print_path(path_to_goal)
