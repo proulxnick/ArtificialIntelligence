@@ -334,20 +334,28 @@ def mini_max(node):
     winner = None
 
     depth = 0
-    while depth <= 4:
-        while player_1_total > 0 and player_2_total > 0:
-            if depth % 2 == 0:
-                new_node = successor_processing('2', node)
-                player = '2'
-            else:
-                new_node = successor_processing('1', node)
-                player = '1'
+    while depth <= 6:
+        if depth % 2 == 0:
+            new_node = successor_processing('2', node)
+            player = '2'
+        else:
+            new_node = successor_processing('1', node)
+            player = '1'
 
-            for child in new_node.children:
-                if player == '1':
-                    new_child_node = successor_processing('2', child)
-                else:
-                    new_child_node = successor_processing('1', child)
+        for child in new_node.children:
+            if player == '1':
+                new_child_node = successor_processing('2', child)
+            else:
+                new_child_node = successor_processing('1', child)
+
+        minimum = float('inf')
+        for node in new_node.children:
+            node.heuristic_value = min_max_heuristic(node.state)
+            if node.heuristic_value < minimum:
+                minimum = node.heuristic_value
+        depth += 1
+
+    print 'breakpoint'
 
 
 def print_board(board):
@@ -386,11 +394,12 @@ def main():
 
     root = Node()
     root.state = board
-    path_to_goal, winner, total_moves, total_captures = min_max(root)
-    print_path(path_to_goal)
-    print '\nThe game is over, ' + winner + ' wins!'
-    print 'Total moves: ' + str(total_moves)
-    print 'Total captures ' + str(total_captures)
+    mini_max(root)
+    # path_to_goal, winner, total_moves, total_captures = min_max(root)
+    # print_path(path_to_goal)
+    # print '\nThe game is over, ' + winner + ' wins!'
+    # print 'Total moves: ' + str(total_moves)
+    # print 'Total captures ' + str(total_captures)
 
 # top level code
 if __name__ == '__main__':
