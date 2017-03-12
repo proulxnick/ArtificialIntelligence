@@ -375,38 +375,38 @@ def mini_max(node):
 
         random.shuffle(new_node.children)
 
-        maximum = float('inf')
-        minimum = float('-inf')
-        while i <= 3:
+        alpha = float('-inf')
+        beta = float('inf')
+        while i <= 4:
             for child in new_node.children:
-                if player == '1':
+                if player == '1' and child.heuristic_value > alpha:
                     new_child_node = successor_processing('2', child)
                     random.shuffle(new_child_node.children)
-                else:
+                elif child.heuristic_value < beta:
                     new_child_node = successor_processing('1', child)
                     random.shuffle(new_child_node.children)
 
             for node in new_node.children:
                 if depth % 2 == 0:
                     node.heuristic_value = minimum_heuristic(node)
-                    if node.heuristic_value > minimum:
-                        maximum = node.heuristic_value
+                    if node.heuristic_value > alpha:
+                        beta = node.heuristic_value
                 else:
                     node.heuristic_value = max_heuristic(node)
-                    if node.heuristic_value < maximum:
-                        minimum = node.heuristic_value
+                    if node.heuristic_value < beta:
+                        alpha = node.heuristic_value
             i += 1
 
         for node in new_node.children:
             is_new = is_new_state(node, path_to_goal)
-            if depth % 2 == 0 and node.heuristic_value == maximum and is_new:
+            if depth % 2 == 0 and node.heuristic_value == beta and is_new:
                 path_to_goal.append(node)
                 # print_board(node.state)
                 # print '\n'
                 player_2_total += node.pieces_captured
                 # input('Continue? 1/0')
                 break
-            elif node.heuristic_value == minimum and is_new:
+            elif node.heuristic_value == alpha and is_new:
                 path_to_goal.append(node)
                 # print_board(node.state)
                 # print '\n'
@@ -416,8 +416,8 @@ def mini_max(node):
 
         player_1, player_2 = count_player_pieces(path_to_goal[-1].state)
         depth += 1
-        if player_1_total >= 2 \
-           or player_2_total >= 2:
+        if player_1_total >= 4 \
+           or player_2_total >= 4:
             break
 
     if player == '1':
