@@ -202,7 +202,7 @@ def successor_processing(player, node):
                 node.children.append(new_node)
                 stack -= 1
         i += 1
-    return node  # this node will hold all the new states created for all of it's child nodes
+    return node, len(node.children)  # this node will hold all the new states created for all of it's child nodes
 
 
 def min_play(node):
@@ -267,9 +267,19 @@ def max_heuristic(node):
     return count
 
 
-def min_heuristic(enemy_node, curr_node):
-    difference = curr_node.pieces_captured - enemy_node.pieces_captured
-    return difference
+def min_heuristic(enemy_node, depth):
+    count = 0
+
+    if depth >= 6:
+        for piece in enemy_node.state:
+            if piece.player == '1' and piece.height >= 3:
+                count += 1
+    else:
+        for piece in enemy_node.state:
+            if piece.player == '1':
+                count += 1
+
+    return count
 
 
 def count_player_pieces(board):
@@ -300,17 +310,19 @@ def min_max(node):
     total_captured = node.pieces_captured
     player_1_total = 18
     player_2_total = 18
-    winner = ''
+    total_children = 0
     total_moves = 0
 
     i = 0
     # total_captured >= 18
     while player_1_total > 0 and player_2_total > 0:
         if i % 2 == 0:
-            new_node = successor_processing('2', node)
+            new_node, length = successor_processing('2', node)
+            total_children += length
             player = '2'
         else:
-            new_node = successor_processing('1', node)
+            new_node, length = successor_processing('1', node)
+            total_children += length
             player = '1'
 
         for node in new_node.children:
@@ -349,51 +361,53 @@ def min_max(node):
     else:
         winner = 'Player 2'
 
-    return path_to_goal, winner, total_moves, total_captured
+    return path_to_goal, winner, total_moves, total_captured, total_children
 
 
 def mini_max(node):
-    board = node.state
     player_1_total = 0
     player_2_total = 0
-    winner = None
     player_1 = 18
     player_2 = 18
+    total_children = 0
     path_to_goal = list()
     player = ''
 
     depth = 0
-    total = 1
     while player_1 > 0 and player_2 > 0:
         i = 1
         if depth % 2 == 0:
-            new_node = successor_processing('2', node)
+            new_node, length = successor_processing('2', node)
+            total_children += length
             player = '2'
         else:
-            new_node = successor_processing('1', node)
+            new_node, length = successor_processing('1', node)
+            total_children += length
             player = '1'
 
         random.shuffle(new_node.children)
 
-        alpha = float('-inf')
-        beta = float('inf')
         while i <= 4:
+            alpha = float('-inf')
+            beta = float('inf')
             for child in new_node.children:
                 if player == '1' and child.heuristic_value > alpha:
-                    new_child_node = successor_processing('2', child)
+                    new_child_node, length = successor_processing('2', child)
+                    total_children += length
                     random.shuffle(new_child_node.children)
                 elif child.heuristic_value < beta:
-                    new_child_node = successor_processing('1', child)
+                    new_child_node, length = successor_processing('1', child)
+                    total_children += length
                     random.shuffle(new_child_node.children)
 
             for node in new_node.children:
                 if depth % 2 == 0:
                     node.heuristic_value = minimum_heuristic(node)
-                    if node.heuristic_value > alpha:
+                    if node.heuristic_value < beta:
                         beta = node.heuristic_value
                 else:
                     node.heuristic_value = max_heuristic(node)
-                    if node.heuristic_value < beta:
+                    if node.heuristic_value > alpha:
                         alpha = node.heuristic_value
             i += 1
 
@@ -425,7 +439,7 @@ def mini_max(node):
     else:
         winner = 'Player 2'
 
-    return path_to_goal, winner
+    return path_to_goal, winner, total_children
 
 
 def print_board(board):
@@ -464,9 +478,10 @@ def main():
 
     root = Node()
     root.state = board
-    path, winner = mini_max(root)
-    print_path(path)
+    path, winner, length = mini_max(root)
+    print_path(path[:len(path) - 4])
     print '\nthe winner is: ' + winner
+    print 'total children processed: ' + str(length)
 
     # path_to_goal, winner, total_moves, total_captures = min_max(root)
     # print_path(path_to_goal)
