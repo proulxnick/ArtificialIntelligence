@@ -387,7 +387,7 @@ def mini_max(node):
 
         random.shuffle(new_node.children)
 
-        while i <= 4:
+        while i <= 2:
             alpha = float('-inf')
             beta = float('inf')
             for child in new_node.children:
@@ -430,8 +430,8 @@ def mini_max(node):
 
         player_1, player_2 = count_player_pieces(path_to_goal[-1].state)
         depth += 1
-        if player_1_total >= 4 \
-           or player_2_total >= 4:
+        if player_1_total >= 3 \
+           or player_2_total >= 3:
             break
 
     if player == '1':
