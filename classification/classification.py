@@ -13,8 +13,8 @@ class Trait:  # the nodes that make up the tree
         self.value = 0  # the trait number (1-10)
         self.parent = None  # which trait this node depends on
         self.depth = 0
-        self.probability_zero = 0.0
-        self.probability_one = 0.0
+        self.probability = 0.0
+        self.parent_probability = 0.0
 
 
 def generate_class_tree():
@@ -42,20 +42,23 @@ def generate_class_tree():
 
 
 def generate_probabilities(tree):
+    probability_dict = dict()
+
     for trait in tree.traits:
-        trait.probability_zero = round(random.random(), 2)
+        trait.probability = round(random.random(), 2)
+        probability_dict[trait.value] = trait.probability  # match for dependant children
 
-    return tree
+    return tree, probability_dict
 
 
-def generate_vector_data(tree):
+def generate_vector_data(tree, probability_dict):
     pass
 
 
 # to be called at top level
 def main():
     tree = generate_class_tree()
-    generate_probabilities(tree)
+    tree, probabilities = generate_probabilities(tree)
     for trait in tree.traits:
         print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
 
