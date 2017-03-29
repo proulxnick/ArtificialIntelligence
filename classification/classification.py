@@ -90,8 +90,8 @@ def generate_vector_data(tree, probability_dict):
 # to be called at top level
 def main():
     tree = generate_class_tree()
-    tree, probabilities = generate_probabilities(tree)
-    vector_data = generate_vector_data(tree, probabilities)
+    new_tree, probabilities = generate_probabilities(tree)
+    vector_data = generate_vector_data(new_tree, probabilities)
     for trait in tree.traits:
         print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
 
