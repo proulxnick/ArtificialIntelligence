@@ -92,6 +92,7 @@ def main():
     tree = generate_class_tree()
     new_tree, probabilities = generate_probabilities(tree)
     vector_data = generate_vector_data(new_tree, probabilities)
+    print vector_data
     for trait in tree.traits:
         print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
 
