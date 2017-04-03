@@ -100,14 +100,45 @@ def get_classifiers(class_trees):
     pass
 
 
-
 # to be called at top level
 def main():
-    tree = generate_class_tree()
-    new_tree = generate_probabilities(tree)
-    tree = generate_vector_data(new_tree)
-    print tree.vector_data
-    for trait in tree.traits:
+    # create all 4 class trees for part 1 and generate their data
+    parent_tree = generate_class_tree()
+
+    tree1 = Tree()
+    tree1.traits = parent_tree.traits
+    tree1 = generate_probabilities(tree1)
+    tree1 = generate_vector_data(tree1)
+
+    tree2 = Tree()
+    tree2.traits = parent_tree.traits
+    tree2 = generate_probabilities(tree2)
+    tree2 = generate_vector_data(tree2)
+
+    tree3 = Tree()
+    tree3.traits = parent_tree.traits
+    tree3 = generate_probabilities(tree3)
+    tree3 = generate_vector_data(tree3)
+
+    tree4 = Tree()
+    tree4.traits = parent_tree.traits
+    tree4 = generate_probabilities(tree4)
+    tree4 = generate_vector_data(tree4)
+
+    print tree1.vector_data
+    for trait in tree1.traits:
+        print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
+
+    print tree2.vector_data
+    for trait in tree2.traits:
+        print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
+
+    print tree3.vector_data
+    for trait in tree3.traits:
+        print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
+
+    print tree4.vector_data
+    for trait in tree4.traits:
         print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
 
 # top level code
