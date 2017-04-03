@@ -59,7 +59,7 @@ def generate_probabilities(tree):
     return tree
 
 
-def get_max_spanning(class_tree):
+def get_max_spanning():
     pass
 
 
@@ -146,13 +146,22 @@ def get_classifiers(class_trees):
     new_class4 = training_testing(training_set, testing_set, 3, class_trees)
     class_trees[3] = new_class4
 
-    i = 0
-    diffs = list()
+    accuracies = list()
     for tree in class_trees:
-        diff = round(tree.training[i] - tree.testing[i], 2)
-        if diff < 0:
-            diff *= -1
-        diffs.append(diff)
+        diffs = list()
+        i = 0
+        while i < 10:
+            diff = round(tree.training[i] - tree.testing[i], 2)
+            if diff < 0:
+                diff *= -1
+            diffs.append(diff)
+            i += 1
+        accuracy = 1 - sum(diffs)
+        accuracies.append(accuracy)
+
+    total_accuracy = sum(accuracies) / 4.0
+
+    return accuracies, total_accuracy
 
 
 # to be called at top level
@@ -185,7 +194,7 @@ def main():
     tree4 = generate_vector_data(tree4)
     class_trees.append(tree4)
 
-    get_classifiers(class_trees)
+    accuracies, total_accuracy = get_classifiers(class_trees)
 
     print tree1.vector_data
     for trait in tree1.traits:
@@ -202,6 +211,12 @@ def main():
     print tree4.vector_data
     for trait in tree4.traits:
         print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
+
+    print '\n\n' + 'Class 1 Accuracy :' + str(accuracies[0]) + \
+                   '\nClass 2 Accuracy :' + str(accuracies[1]) + \
+                   '\nClass 3 Accuracy :' + str(accuracies[2]) + \
+                   '\nClass 4 Accuracy :' + str(accuracies[3]) + '\n'
+    print 'Total Accuracy: ' + str(total_accuracy)
 
 # top level code
 if __name__ == '__main__':
