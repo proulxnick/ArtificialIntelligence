@@ -7,6 +7,8 @@ class Tree:
         self.traits = list()
         self.probabilities = dict()
         self.vector_data = list()
+        self.training = list()
+        self.testing = list()
 
 
 class Trait:  # the nodes that make up the tree
@@ -96,13 +98,78 @@ def generate_vector_data(tree):
     return tree
 
 
+def training_testing(training_set, testing_set, index, class_trees):
+    i = 0
+    class_probabilities = list()
+    while i < 10:
+        count = 0.0
+        for vector in training_set[index]:
+            if vector[i] == 0:
+                count += 1.0
+        i += 1
+        total = round(count / 1599.0, 2)
+        class_probabilities.append(total)
+
+    new_tree = class_trees[index]
+    new_tree.training = class_probabilities
+
+    i = 0
+    class_probabilities = list()
+    while i < 10:
+        count = 0.0
+        for vector in testing_set[index]:
+            if vector[i] == 0:
+                count += 1.0
+        i += 1
+        total = round(count / 400.0, 2)
+        class_probabilities.append(total)
+
+    new_tree.testing = class_probabilities
+    return new_tree
+
+
+def testing(testing_set, index, class_trees):
+    i = 0
+    class_probabilities = list()
+    while i < 10:
+        count = 0.0
+        for vector in testing_set[index]:
+            if vector[i] == 0:
+                count += 1.0
+        i += 1
+        total = round(count / 400.0, 2)
+        class_probabilities.append(total)
+
+    new_tree = class_trees[index]
+    new_tree.testing = class_probabilities
+    return new_tree
+
+
 def get_classifiers(class_trees):
     training_set = list()
     testing_set = list()
 
     # add equal number of data sets to the training and testing sets for each class
     for tree in class_trees:
-        pass
+        testing_set.append(tree.vector_data[:400])
+        training_set.append(tree.vector_data[400:-1])
+
+    new_class1 = training_testing(training_set, testing_set, 0, class_trees)
+    class_trees[0] = new_class1
+    new_class2 = training_testing(training_set, testing_set, 1, class_trees)
+    class_trees[1] = new_class2
+    new_class3 = training_testing(training_set, testing_set, 2, class_trees)
+    class_trees[2] = new_class3
+    new_class4 = training_testing(training_set, testing_set, 3, class_trees)
+    class_trees[3] = new_class4
+
+    i = 0
+    diffs = list()
+    for tree in class_trees:
+        diff = round(tree.training[i] - tree.testing[i], 2)
+        if diff < 0:
+            diff *= -1
+        diffs.append(diff)
 
 
 # to be called at top level
@@ -134,6 +201,8 @@ def main():
     tree4 = generate_probabilities(tree4)
     tree4 = generate_vector_data(tree4)
     class_trees.append(tree4)
+
+    get_classifiers(class_trees)
 
     print tree1.vector_data
     for trait in tree1.traits:
