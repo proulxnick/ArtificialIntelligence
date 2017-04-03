@@ -97,33 +97,43 @@ def generate_vector_data(tree):
 
 
 def get_classifiers(class_trees):
-    pass
+    training_set = list()
+    testing_set = list()
+
+    # add equal number of data sets to the training and testing sets for each class
+    for tree in class_trees:
+        pass
 
 
 # to be called at top level
 def main():
-    # create all 4 class trees for part 1 and generate their data
+    # create all 4 class trees for part 1 and generate their data and store them in a list
     parent_tree = generate_class_tree()
+    class_trees = list()
 
     tree1 = Tree()
     tree1.traits = parent_tree.traits
     tree1 = generate_probabilities(tree1)
     tree1 = generate_vector_data(tree1)
+    class_trees.append(tree1)
 
     tree2 = Tree()
     tree2.traits = parent_tree.traits
     tree2 = generate_probabilities(tree2)
     tree2 = generate_vector_data(tree2)
+    class_trees.append(tree2)
 
     tree3 = Tree()
     tree3.traits = parent_tree.traits
     tree3 = generate_probabilities(tree3)
     tree3 = generate_vector_data(tree3)
+    class_trees.append(tree3)
 
     tree4 = Tree()
     tree4.traits = parent_tree.traits
     tree4 = generate_probabilities(tree4)
     tree4 = generate_vector_data(tree4)
+    class_trees.append(tree4)
 
     print tree1.vector_data
     for trait in tree1.traits:
