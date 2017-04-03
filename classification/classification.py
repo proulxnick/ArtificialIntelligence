@@ -5,6 +5,8 @@ class Tree:
 
     def __init__(self):
         self.traits = list()
+        self.probabilities = dict()
+        self.vector_data = list()
 
 
 class Trait:  # the nodes that make up the tree
@@ -51,10 +53,15 @@ def generate_probabilities(tree):
         trait.probability = round(random.random(), 2)
         probability_dict[trait.value] = trait.probability  # match for dependant children
 
-    return tree, probability_dict
+    tree.probabilities = probability_dict
+    return tree
 
 
-def generate_vector_data(tree, probability_dict):
+def get_max_spanning(class_tree):
+    pass
+
+
+def generate_vector_data(tree):
     vector_list = list()
 
     i = 1
@@ -66,7 +73,7 @@ def generate_vector_data(tree, probability_dict):
                 data_list.append(int(random.choice('01')))
             else:
                 parent_index = trait.parent_index
-                parent_probability = probability_dict[trait.parent]
+                parent_probability = tree.probabilities[trait.parent]
                 random_value = round(random.random(), 2)
 
                 if data_list[parent_index] == 0:
@@ -84,15 +91,22 @@ def generate_vector_data(tree, probability_dict):
             j += 1
         i += 1
         vector_list.append(data_list)
-    return vector_list
+
+    tree.vector_data = vector_list
+    return tree
+
+
+def get_classifiers(class_trees):
+    pass
+
 
 
 # to be called at top level
 def main():
     tree = generate_class_tree()
-    new_tree, probabilities = generate_probabilities(tree)
-    vector_data = generate_vector_data(new_tree, probabilities)
-    print vector_data
+    new_tree = generate_probabilities(tree)
+    tree = generate_vector_data(new_tree)
+    print tree.vector_data
     for trait in tree.traits:
         print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
 
