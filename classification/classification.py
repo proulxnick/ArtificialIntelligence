@@ -128,23 +128,6 @@ def training_testing(training_set, testing_set, index, class_trees):
     return new_tree
 
 
-def testing(testing_set, index, class_trees):
-    i = 0
-    class_probabilities = list()
-    while i < 10:
-        count = 0.0
-        for vector in testing_set[index]:
-            if vector[i] == 0:
-                count += 1.0
-        i += 1
-        total = round(count / 400.0, 2)
-        class_probabilities.append(total)
-
-    new_tree = class_trees[index]
-    new_tree.testing = class_probabilities
-    return new_tree
-
-
 def get_classifiers(class_trees):
     training_set = list()
     testing_set = list()
