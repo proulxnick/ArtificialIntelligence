@@ -212,6 +212,16 @@ def get_real_data(averages):
 
 
 def get_real_classifier(classes):
+    training_set = list()
+    testing_set = list()
+
+    testing_set.append(classes[0][:12])
+    testing_set.append(classes[1][:14])
+    testing_set.append(classes[2][:9])
+    training_set.append(classes[0][12:-1])
+    training_set.append(classes[1][14:-1])
+    training_set.append(classes[2][9:-1])
+
     pass
 
 
@@ -292,6 +302,8 @@ def main():
     print 'The averages for each column are: '
     for avg in averages:
         print avg
+
+    get_real_classifier(classes)
 
 
 # top level code
