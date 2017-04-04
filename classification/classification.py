@@ -164,6 +164,28 @@ def get_classifiers(class_trees):
     return accuracies, total_accuracy
 
 
+def get_real_data():
+    data_path = 'C:\Users\Nick\Desktop\Work\AI\Datasets\wine.csv'
+    classes = list()
+    class1 = list()
+    class2 = list()
+    class3 = list()
+    data = list(open(data_path).readlines())
+    i = 0
+    for line in data:
+        line = line.strip('\n').strip(" ' ")
+        if i < 59:
+            class1.append(line.split(','))
+        elif 130 > i >= 59:
+            class2.append(line.split(','))
+        else:
+            class3.append(line.split(','))
+        i += 1
+    classes.append(class1)
+    classes.append(class2)
+    classes.append(class3)
+    
+
 # to be called at top level
 def main():
     # create all 4 class trees for part 1 and generate their data and store them in a list
@@ -231,6 +253,7 @@ def main():
                    '\nClass 3 Accuracy :' + str(accuracies[2]) + \
                    '\nClass 4 Accuracy :' + str(accuracies[3]) + '\n'
     print 'Total Accuracy: ' + str(total_accuracy)
+
 
 # top level code
 if __name__ == '__main__':

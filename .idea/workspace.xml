@@ -23,8 +23,8 @@
       <file leaf-file-name="classification.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/classification/classification.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="574">
-              <caret line="226" column="71" lean-forward="true" selection-start-line="226" selection-start-column="71" selection-end-line="226" selection-end-column="71" />
+            <state relative-caret-position="676">
+              <caret line="186" column="4" lean-forward="false" selection-start-line="186" selection-start-column="4" selection-end-line="186" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -820,16 +820,11 @@
           <line>441</line>
           <option name="timeStamp" value="339" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/classification/classification.py</url>
-          <line>163</line>
-          <option name="timeStamp" value="385" />
-        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="386" />
+      <option name="time" value="391" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
@@ -1195,8 +1190,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/classification/classification.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="574">
-          <caret line="226" column="71" lean-forward="true" selection-start-line="226" selection-start-column="71" selection-end-line="226" selection-end-column="71" />
+        <state relative-caret-position="676">
+          <caret line="186" column="4" lean-forward="false" selection-start-line="186" selection-start-column="4" selection-end-line="186" selection-end-column="4" />
           <folding />
         </state>
       </provider>
