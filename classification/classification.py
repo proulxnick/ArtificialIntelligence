@@ -164,8 +164,9 @@ def get_classifiers(class_trees):
     return accuracies, total_accuracy
 
 
-def get_real_data():
+def get_real_data(averages):
     data_path = 'C:\Users\Nick\Desktop\Work\AI\Datasets\wine.csv'
+
     classes = list()
     class1 = list()
     class2 = list()
@@ -175,16 +176,44 @@ def get_real_data():
     for line in data:
         line = line.strip('\n').strip(" ' ")
         if i < 59:
-            class1.append(line.split(','))
+            line = line.split(',')
+            line = line[1:]
+            class1.append(line)
         elif 130 > i >= 59:
-            class2.append(line.split(','))
+            line = line.split(',')
+            line = line[1:]
+            class2.append(line)
         else:
-            class3.append(line.split(','))
+            line = line.split(',')
+            line = line[1:]
+            class3.append(line)
         i += 1
     classes.append(class1)
     classes.append(class2)
     classes.append(class3)
-    
+
+    # create binary data from classes
+    x = 0
+    while x < 13:
+        k = 0
+        while k < 3:
+            for each_class in classes:
+                j = 0
+                for each_class_set in each_class:
+                    if float(each_class_set[x]) <= averages[x]:
+                        classes[k][j][x] = 0
+                    else:
+                        classes[k][j][x] = 1
+                    j += 1
+                k += 1
+        x += 1
+
+    return classes
+
+
+def get_real_classifier(classes):
+    pass
+
 
 # to be called at top level
 def main():
@@ -252,7 +281,17 @@ def main():
                    '\nClass 2 Accuracy :' + str(accuracies[1]) + \
                    '\nClass 3 Accuracy :' + str(accuracies[2]) + \
                    '\nClass 4 Accuracy :' + str(accuracies[3]) + '\n'
-    print 'Total Accuracy: ' + str(total_accuracy)
+    print 'Total Accuracy: ' + str(round(total_accuracy, 2))
+
+    print '\n\n\n ---------------- PART 2 ----------------\n\n\n'
+
+    averages = [13.00, 2.34, 2.37, 19.49, 99.74, 2.30,
+                2.03, 0.36, 1.59, 5.06, 0.96, 2.61, 746.89]
+    classes = get_real_data(averages)  # binary data
+
+    print 'The averages for each column are: '
+    for avg in averages:
+        print avg
 
 
 # top level code
