@@ -196,21 +196,35 @@ def main():
 
     accuracies, total_accuracy = get_classifiers(class_trees)
 
-    print tree1.vector_data
-    for trait in tree1.traits:
-        print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
+    print 'DT Structure: \n'
+    i = 0
+    for trait in parent_tree.traits:
+        if i == 0:
+            print '  ' + str(trait.value)
+        elif i == 1 or i == 3 or i == 5 or i == 7 or i == 9:
+            if trait.value == 10:
+                print str(trait.value) + ' ',
+            else:
+                print str(trait.value) + '  ',
+        else:
+            print str(trait.value)
+        i += 1
 
-    print tree2.vector_data
-    for trait in tree2.traits:
-        print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
+    print '\n\nClass 1 Weights: '
+    for key in class_trees[0].probabilities:
+        print str(key) + ' = ' + str(class_trees[0].probabilities[key])
 
-    print tree3.vector_data
-    for trait in tree3.traits:
-        print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
+    print '\n\nClass 2 Weights: '
+    for key in class_trees[1].probabilities:
+        print str(key) + ' = ' + str(class_trees[1].probabilities[key])
 
-    print tree4.vector_data
-    for trait in tree4.traits:
-        print str(trait.value) + ' -- ' + str(trait.depth) + ' -- ' + str(trait.parent)
+    print '\n\nClass 3 Weights: '
+    for key in class_trees[2].probabilities:
+        print str(key) + ' = ' + str(class_trees[2].probabilities[key])
+
+    print '\n\nClass 4 Weights: '
+    for key in class_trees[3].probabilities:
+        print str(key) + ' = ' + str(class_trees[3].probabilities[key])
 
     print '\n\n' + 'Class 1 Accuracy :' + str(accuracies[0]) + \
                    '\nClass 2 Accuracy :' + str(accuracies[1]) + \
