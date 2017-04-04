@@ -211,6 +211,34 @@ def get_real_data(averages):
     return classes
 
 
+def real_training_testing(training_set, testing_set, index):
+    i = 0
+    class_training_probabilities = list()
+    class_testing_probabilities = list()
+    while i < 13:
+        count = 0.0
+        for vector in training_set[index]:
+            if vector[i] == 0:
+                count += 1.0
+        i += 1
+        total = round(count / 143.0, 2)
+        class_training_probabilities.append(total)
+
+    i = 0
+    while i < 13:
+        count = 0.0
+        for vector in testing_set[index]:
+            if vector[i] == 0:
+                count += 1.0
+        i += 1
+        total = round(count / 35.0, 2)
+        class_testing_probabilities.append(total)
+
+    training = sum(class_training_probabilities)
+    testing = sum(class_testing_probabilities)
+    return training, testing
+
+
 def get_real_classifier(classes):
     training_set = list()
     testing_set = list()
@@ -222,7 +250,13 @@ def get_real_classifier(classes):
     training_set.append(classes[1][14:-1])
     training_set.append(classes[2][9:-1])
 
-    pass
+    training, testing = real_training_testing(training_set, testing_set, 0)
+    total = testing - training
+    if total < 0:
+        total *= -1
+
+    total = 1 - total
+    return total
 
 
 # to be called at top level
@@ -303,7 +337,8 @@ def main():
     for avg in averages:
         print avg
 
-    get_real_classifier(classes)
+    accuracy = get_real_classifier(classes)
+    print 'Accuracy for real wine data set is: ' + str(accuracy)
 
 
 # top level code
