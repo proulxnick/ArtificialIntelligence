@@ -58,6 +58,15 @@ def randomize_cube():
     return initial_state
 
 
+def process_moves(curr_node, cube_size):
+
+    # at any point in time there will be 3*cube_size number of new moves
+    # this function calculates and returns all possible moves and returns
+    # each as a new state in a newly constructed node
+
+    pass
+
+
 # to be called at top level
 def main():
     state = randomize_cube()
