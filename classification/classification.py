@@ -338,7 +338,7 @@ def main():
         print avg
 
     accuracy = get_real_classifier(classes)
-    print 'Accuracy for real wine data set is: ' + str(accuracy)
+    print '\nAccuracy for real wine data set is: ' + str(accuracy)
 
 
 # top level code
