@@ -17,6 +17,38 @@ class Node:
         self.children = list()
         self.heuristic_value = 0
 
+    def is_at_goal(self, state):
+        complete = True
+        i = 1
+        face_size = len(state) / 6
+        for tile in state:
+            if i <= face_size \
+                    and not tile == 1:
+                complete = False
+                break
+            elif face_size * 2 >= i > face_size \
+                    and not tile == 2:
+                complete = False
+                break
+            elif face_size * 3 >= i > face_size * 2 \
+                    and not tile == 3:
+                complete = False
+                break
+            elif face_size * 4 >= i > face_size * 3 \
+                    and not tile == 4:
+                complete = False
+                break
+            elif face_size * 5 >= i > face_size * 4 \
+                    and not tile == 5:
+                complete = False
+                break
+            elif len(state) >= i > face_size * 5 \
+                    and not tile == 6:
+                complete = False
+                break
+
+        return complete
+
 
 def copy_list(old_list):
     # used to copy contents of one list and create another list
@@ -26,6 +58,35 @@ def copy_list(old_list):
         new_list.append(i)
 
     return new_list
+
+
+def out_of_place(node):
+    # heuristic to find number of nodes out of goal state positioning
+    i = 1
+    count = 0
+    face_size = len(node.state) / 6
+    for tile in node.state:
+        if i <= face_size \
+           and not tile == 1:
+            count += 1
+        elif face_size * 2 >= i > face_size \
+                and not tile == 2:
+            count += 1
+        elif face_size * 3 >= i > face_size * 2 \
+                and not tile == 3:
+            count += 1
+        elif face_size * 4 >= i > face_size * 3 \
+                and not tile == 4:
+            count += 1
+        elif face_size * 5 >= i > face_size * 4 \
+                and not tile == 5:
+            count += 1
+        elif len(node.state) >= i > face_size * 5 \
+                and not tile == 6:
+            count += 1
+
+    node.heuristic_value = count
+    return node
 
 
 def randomize_cube():
@@ -312,7 +373,14 @@ def process_moves(curr_node, cube_size):
 
 
 def a_star():
-    pass
+    initial_state, cube_size = randomize_cube()
+    node = Node()
+    node.state = initial_state
+    path_to_goal = list()
+    closed = list()
+    transplanted = list()
+    path_to_goal.append(node)
+    scope_changes = 0
 
 
 # to be called at top level
