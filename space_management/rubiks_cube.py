@@ -55,7 +55,7 @@ def randomize_cube():
 
     random.shuffle(initial_state)  # randomize the order of the cube
 
-    return initial_state
+    return initial_state, size
 
 
 def process_moves(curr_node, cube_size):
@@ -65,18 +65,19 @@ def process_moves(curr_node, cube_size):
     # each as a new state in a newly constructed node
 
     cube_state = curr_node.state  # state passed in - this will be copied and manipulated
-    side_total = math.pow(cube_size, 2)
+    side_total = int(math.pow(cube_size, 2))
+    used_states = list()
 
     # move up front
     row = 1
-    column = 1
     i = side_total * 5  # first index at front of cube
     j = side_total  # first index at top of cube
     k = side_total * 4  # first index at back of cube
     l = side_total * 3  # first index at bottom of cube
     while row <= cube_size:
         new_state = copy_list(cube_state)
-        while column <= cube_size:
+        column = 0
+        while column < cube_size:
             new_state[j] = cube_state[i]  # front -> top
             new_state[k] = cube_state[j]  # top -> back
             new_state[l] = cube_state[k]  # back -> bottom
@@ -87,19 +88,75 @@ def process_moves(curr_node, cube_size):
             k += cube_size
             l += cube_size
             column += 1
+
+        # create new node with new_state if not already been created
+        if new_state not in used_states:
+            new_node = Node()
+            new_node.state = new_state
+            new_node.parent = curr_node
+            new_node.depth = curr_node.depth + 1
+            curr_node.children.append(new_node)
+            used_states.append(new_state)
+        i = side_total * 5  # first index at front of cube
+        j = side_total  # first index at top of cube
+        k = side_total * 4  # first index at back of cube
+        l = side_total * 3  # first index at bottom of cube
+        i += row
+        j += row
+        k += row
+        l += row
+        row += 1
+
+    # move down front
+    row = 1
+    i = side_total * 5  # first index at front of cube
+    j = side_total  # first index at top of cube
+    k = side_total * 4  # first index at back of cube
+    l = side_total * 3  # first index at bottom of cube
+    while row <= cube_size:
+        new_state = copy_list(cube_state)
+        column = 0
+        while column < cube_size:
+            new_state[i] = cube_state[l]  # front -> bottom
+            new_state[l] = cube_state[k]  # bottom -> back
+            new_state[k] = cube_state[j]  # back -> top
+            new_state[j] = cube_state[i]  # top -> front
+
+            i += cube_size
+            j += cube_size
+            k += cube_size
+            l += cube_size
+            column += 1
+
         # create new node with new_state
-        new_node = Node()
-        new_node.state = new_state
-        new_node.parent = curr_node
-        new_node.depth = curr_node.depth + 1
-        curr_node.children.append(new_node)
+        if new_state not in used_states:
+            new_node = Node()
+            new_node.state = new_state
+            new_node.parent = curr_node
+            new_node.depth = curr_node.depth + 1
+            curr_node.children.append(new_node)
+            used_states.append(new_state)
+        i = side_total * 5  # first index at front of cube
+        j = side_total  # first index at top of cube
+        k = side_total * 4  # first index at back of cube
+        l = side_total * 3  # first index at bottom of cube
+        i += row
+        j += row
+        k += row
+        l += row
         row += 1
 
 
 # to be called at top level
 def main():
-    state = randomize_cube()
-    print state
+    parent = Node()
+    state, size = randomize_cube()
+    parent.state = state
+    process_moves(parent, size)
+    for child in parent.children:
+        for i in child.state:
+            print i,
+        print ''
 
 # top level code
 if __name__ == '__main__':
