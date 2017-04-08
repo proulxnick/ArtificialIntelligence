@@ -58,6 +58,14 @@ def randomize_cube():
     return initial_state, size
 
 
+def rotate_left(state, face):
+    pass
+
+
+def rotate_right(state, face):
+    pass
+
+
 def process_moves(curr_node, cube_size):
 
     # at any point in time there will be 3*cube_size number of new moves
@@ -145,6 +153,166 @@ def process_moves(curr_node, cube_size):
         k += row
         l += row
         row += 1
+
+    # move right front
+    row = 1
+    i = side_total * 5  # first index at front of cube
+    j = side_total * 2  # first index at right of cube
+    k = side_total * 4  # first index at back of cube
+    l = 0  # first index at left of cube
+    while row <= cube_size:
+        new_state = copy_list(cube_state)
+        column = 0
+        while column < cube_size:
+            new_state[i] = cube_state[j]  # front -> right
+            new_state[j] = cube_state[k]  # right -> back
+            new_state[k] = cube_state[l]  # back -> left
+            new_state[l] = cube_state[i]  # left -> front
+
+            i += 1
+            j += 1
+            k += 1
+            l += 1
+            column += 1
+
+        # create new node with new_state
+        if new_state not in used_states:
+            new_node = Node()
+            new_node.state = new_state
+            new_node.parent = curr_node
+            new_node.depth = curr_node.depth + 1
+            curr_node.children.append(new_node)
+            used_states.append(new_state)
+        i = side_total * 5  # first index at front of cube
+        j = side_total  # first index at top of cube
+        k = side_total * 4  # first index at back of cube
+        l = side_total * 3  # first index at bottom of cube
+        i += cube_size * row
+        j += cube_size * row
+        k += cube_size * row
+        l += cube_size * row
+        row += 1
+
+    # move left front
+    row = 1
+    i = side_total * 5  # first index at front of cube
+    j = side_total * 2  # first index at right of cube
+    k = side_total * 4  # first index at back of cube
+    l = 0  # first index at left of cube
+    while row <= cube_size:
+        new_state = copy_list(cube_state)
+        column = 0
+        while column < cube_size:
+            new_state[i] = cube_state[l]  # front -> left
+            new_state[l] = cube_state[k]  # left -> back
+            new_state[k] = cube_state[j]  # back -> right
+            new_state[j] = cube_state[i]  # right -> front
+
+            i += 1
+            j += 1
+            k += 1
+            l += 1
+            column += 1
+
+        # create new node with new_state
+        if new_state not in used_states:
+            new_node = Node()
+            new_node.state = new_state
+            new_node.parent = curr_node
+            new_node.depth = curr_node.depth + 1
+            curr_node.children.append(new_node)
+            used_states.append(new_state)
+        i = side_total * 5  # first index at front of cube
+        j = side_total  # first index at top of cube
+        k = side_total * 4  # first index at back of cube
+        l = side_total * 3  # first index at bottom of cube
+        i += cube_size * row
+        j += cube_size * row
+        k += cube_size * row
+        l += cube_size * row
+        row += 1
+
+    # move up left
+    row = 1
+    i = 0  # first index at left of cube
+    j = side_total  # first index at top of cube
+    k = side_total * 2  # first index at right of cube
+    l = side_total * 3  # first index at bottom of cube
+    while row <= cube_size:
+        new_state = copy_list(cube_state)
+        column = 0
+        while column < cube_size:
+            new_state[i] = cube_state[j]  # left -> top
+            new_state[j] = cube_state[k]  # top -> right
+            new_state[k] = cube_state[l]  # right -> bottom
+            new_state[l] = cube_state[i]  # bottom -> left
+
+            i += cube_size
+            j += cube_size
+            k += cube_size
+            l += cube_size
+            column += 1
+
+        # create new node with new_state if not already been created
+        if new_state not in used_states:
+            new_node = Node()
+            new_node.state = new_state
+            new_node.parent = curr_node
+            new_node.depth = curr_node.depth + 1
+            curr_node.children.append(new_node)
+            used_states.append(new_state)
+        i = side_total * 5  # first index at front of cube
+        j = side_total  # first index at top of cube
+        k = side_total * 4  # first index at back of cube
+        l = side_total * 3  # first index at bottom of cube
+        i += row
+        j += row
+        k += row
+        l += row
+        row += 1
+
+    # move down left
+    row = 1
+    i = 0  # first index at left of cube
+    j = side_total  # first index at top of cube
+    k = side_total * 2  # first index at right of cube
+    l = side_total * 3  # first index at bottom of cube
+    while row <= cube_size:
+        new_state = copy_list(cube_state)
+        column = 0
+        while column < cube_size:
+            new_state[i] = cube_state[l]  # left -> bottom
+            new_state[l] = cube_state[k]  # bottom -> right
+            new_state[k] = cube_state[j]  # right -> top
+            new_state[j] = cube_state[i]  # top -> left
+
+            i += cube_size
+            j += cube_size
+            k += cube_size
+            l += cube_size
+            column += 1
+
+        # create new node with new_state if not already been created
+        if new_state not in used_states:
+            new_node = Node()
+            new_node.state = new_state
+            new_node.parent = curr_node
+            new_node.depth = curr_node.depth + 1
+            curr_node.children.append(new_node)
+            used_states.append(new_state)
+        i = side_total * 5  # first index at front of cube
+        j = side_total  # first index at top of cube
+        k = side_total * 4  # first index at back of cube
+        l = side_total * 3  # first index at bottom of cube
+        i += row
+        j += row
+        k += row
+        l += row
+        row += 1
+
+
+def a_star():
+    pass
 
 
 # to be called at top level
