@@ -46,6 +46,7 @@ class Node:
                     and not tile == 6:
                 complete = False
                 break
+            i += 1
 
         return complete
 
@@ -84,6 +85,7 @@ def out_of_place(node):
         elif len(node.state) >= i > face_size * 5 \
                 and not tile == 6:
             count += 1
+        i += 1
 
     node.heuristic_value = count
     return node
@@ -388,11 +390,16 @@ def main():
     parent = Node()
     state, size = randomize_cube()
     parent.state = state
-    process_moves(parent, size)
-    for child in parent.children:
-        for i in child.state:
-            print i,
-        print ''
+    h = out_of_place(parent)
+    print parent.state
+    print h.heuristic_value
+    x = h.is_at_goal(h.state)
+    print x
+    # process_moves(parent, size)
+    # for child in parent.children:
+    #     for i in child.state:
+    #         print i,
+    #     print ''
 
 # top level code
 if __name__ == '__main__':
