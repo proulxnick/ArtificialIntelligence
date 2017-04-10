@@ -390,16 +390,11 @@ def main():
     parent = Node()
     state, size = randomize_cube()
     parent.state = state
-    h = out_of_place(parent)
-    print parent.state
-    print h.heuristic_value
-    x = h.is_at_goal(h.state)
-    print x
-    # process_moves(parent, size)
-    # for child in parent.children:
-    #     for i in child.state:
-    #         print i,
-    #     print ''
+    process_moves(parent, size)
+    for child in parent.children:
+        for i in child.state:
+            print i,
+        print ''
 
 # top level code
 if __name__ == '__main__':
