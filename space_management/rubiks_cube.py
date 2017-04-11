@@ -609,6 +609,27 @@ def a_star():
     scope_changes = 0
 
 
+def print_cube_state(state, cube_size):
+    #  print back side
+    x = 0
+    y = 1  # row length
+    z = 1  # all 6 rows
+    while x < len(state):
+        print state[x],
+        if y == cube_size:
+            if z == cube_size * 6:
+                print ' '
+                z = 0
+            else:
+                print ' ',
+            y = 0
+        x += 1
+        y += 1
+        z += 1
+
+    print '\n\n'
+
+
 # to be called at top level
 def main():
     parent = Node()
@@ -616,9 +637,7 @@ def main():
     parent.state = state
     process_moves(parent, size)
     for child in parent.children:
-        for i in child.state:
-            print i,
-        print ''
+        print_cube_state(child.state, size)
 
 
 # top level code
