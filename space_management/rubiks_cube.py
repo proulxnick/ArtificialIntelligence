@@ -92,31 +92,31 @@ def out_of_place(node):
 
 
 def randomize_cube():
-    # valid_size = False
-    # initial_state = list()
-    initial_state = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6]
+    valid_size = False
+    initial_state = list()
+    initial_state = list()
     size = 2
 
-    # # get the user to input the degree of the cube
-    # while not valid_size:
-    #     size = input("Enter the degree/size cube you wish to solve (e.g 3 = 3x3 Rubik's Cube)")
-    #     if size > 1:
-    #         valid_size = True
-    #     else:
-    #         print "Cube size must be greater than 1"
-    #
-    # # now populate the list of tiles which will be the original state
-    # count1 = 0
-    # count2 = 0
-    # i = 1
-    # while count1 < 6:
-    #     while count2 < math.pow(size, 2):
-    #         initial_state.append(i)
-    #         count2 += 1
-    #     count1 += 1
-    #     count2 = 0
-    #     i += 1
-    #
+    # get the user to input the degree of the cube
+    while not valid_size:
+        size = input("Enter the degree/size cube you wish to solve (e.g 3 = 3x3 Rubik's Cube)")
+        if size > 1:
+            valid_size = True
+        else:
+            print "Cube size must be greater than 1"
+
+    # now populate the list of tiles which will be the original state
+    count1 = 0
+    count2 = 0
+    i = 1
+    while count1 < 6:
+        while count2 < math.pow(size, 2):
+            initial_state.append(i)
+            count2 += 1
+        count1 += 1
+        count2 = 0
+        i += 1
+
     # random.shuffle(initial_state)  # randomize the order of the cube
 
     return initial_state, size
@@ -176,7 +176,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[m:m+2])
+                    new_face.append(cube_state[m:m+cube_size])
                     z += 2
                     m += 2
 
@@ -191,7 +191,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[n:n+2])
+                    new_face.append(cube_state[n:n+cube_size])
                     z += 2
                     n += 2
 
@@ -247,7 +247,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[m:m+2])
+                    new_face.append(cube_state[m:m+cube_size])
                     z += 2
                     m += 2
 
@@ -262,7 +262,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[n:n+2])
+                    new_face.append(cube_state[n:n+cube_size])
                     z += 2
                     n += 2
 
@@ -318,7 +318,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[m:m+2])
+                    new_face.append(cube_state[m:m+cube_size])
                     z += 2
                     m += 2
 
@@ -333,7 +333,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[n:n+2])
+                    new_face.append(cube_state[n:n+cube_size])
                     z += 2
                     n += 2
 
@@ -389,7 +389,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[m:m+2])
+                    new_face.append(cube_state[m:m+cube_size])
                     z += 2
                     m += 2
 
@@ -404,7 +404,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[n:n+2])
+                    new_face.append(cube_state[n:n+cube_size])
                     z += 2
                     n += 2
 
@@ -431,7 +431,7 @@ def process_moves(curr_node, cube_size):
         i = side_total * 5  # first index at front of cube
         j = side_total  # first index at top of cube
         k = side_total * 4  # first index at back of cube
-        l = side_total * 3  # first index at bottom of cube
+        l = 0  # first index at left of cube
         i += cube_size * row
         j += cube_size * row
         k += cube_size * row
@@ -460,7 +460,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[m:m+2])
+                    new_face.append(cube_state[m:m+cube_size])
                     z += 2
                     m += 2
 
@@ -475,7 +475,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[n:n+2])
+                    new_face.append(cube_state[n:n+cube_size])
                     z += 2
                     n += 2
 
@@ -499,9 +499,9 @@ def process_moves(curr_node, cube_size):
             new_node.depth = curr_node.depth + 1
             curr_node.children.append(new_node)
             used_states.append(new_state)
-        i = side_total * 5  # first index at front of cube
+        i = 0  # first index at left of cube
         j = side_total  # first index at top of cube
-        k = side_total * 4  # first index at back of cube
+        k = side_total * 2  # first index at right of cube
         l = side_total * 3  # first index at bottom of cube
         i += row
         j += row
@@ -531,7 +531,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[m:m+2])
+                    new_face.append(cube_state[m:m+cube_size])
                     z += 2
                     m += 2
 
@@ -546,7 +546,7 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[n:n+2])
+                    new_face.append(cube_state[n:n+cube_size])
                     z += 2
                     n += 2
 
@@ -570,9 +570,9 @@ def process_moves(curr_node, cube_size):
             new_node.depth = curr_node.depth + 1
             curr_node.children.append(new_node)
             used_states.append(new_state)
-        i = side_total * 5  # first index at front of cube
+        i = 0  # first index at left of cube
         j = side_total  # first index at top of cube
-        k = side_total * 4  # first index at back of cube
+        k = side_total * 2  # first index at right of cube
         l = side_total * 3  # first index at bottom of cube
         i += row
         j += row
