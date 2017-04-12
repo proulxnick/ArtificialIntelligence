@@ -1,6 +1,8 @@
 import random
 import math
 
+from index_config import shuffle_moves
+
 
 class BadStateException(Exception):
 
@@ -91,11 +93,31 @@ def out_of_place(node):
     return node
 
 
+def shuffle_cube(state, size):
+    count = 1
+    while count <= 6:
+        move_choice = random.randrange(1, 7)
+        if move_choice == 1:
+            state = shuffle_moves.move_1(state, size)
+        elif move_choice == 2:
+            state = shuffle_moves.move_2(state, size)
+        elif move_choice == 3:
+            state = shuffle_moves.move_3(state, size)
+        elif move_choice == 4:
+            state = shuffle_moves.move_4(state, size)
+        elif move_choice == 5:
+            state = shuffle_moves.move_5(state, size)
+        elif move_choice == 6:
+            state = shuffle_moves.move_6(state, size)
+        count += 1
+
+    return state
+
+
 def randomize_cube():
     valid_size = False
     initial_state = list()
-    initial_state = list()
-    size = 2
+    size = 0
 
     # get the user to input the degree of the cube
     while not valid_size:
@@ -117,7 +139,7 @@ def randomize_cube():
         count2 = 0
         i += 1
 
-    # random.shuffle(initial_state)  # randomize the order of the cube
+    initial_state = shuffle_cube(initial_state, size)  # randomize the order of the cube
 
     return initial_state, size
 
@@ -429,7 +451,7 @@ def process_moves(curr_node, cube_size):
             curr_node.children.append(new_node)
             used_states.append(new_state)
         i = side_total * 5  # first index at front of cube
-        j = side_total  # first index at top of cube
+        j = side_total * 2  # first index at right of cube
         k = side_total * 4  # first index at back of cube
         l = 0  # first index at left of cube
         i += cube_size * row
