@@ -228,9 +228,9 @@ def move_3(cube_state, cube_size):
             l += 1
             column += 1
         i = side_total * 5  # first index at front of cube
-        j = side_total  # first index at top of cube
+        j = side_total * 2  # first index at right of cube
         k = side_total * 4  # first index at back of cube
-        l = side_total * 3  # first index at bottom of cube
+        l = 0  # first index at left of cube
         i += cube_size * row
         j += cube_size * row
         k += cube_size * row
@@ -297,7 +297,7 @@ def move_4(cube_state, cube_size):
             l += 1
             column += 1
         i = side_total * 5  # first index at front of cube
-        j = side_total  # first index at top of cube
+        j = side_total * 2  # first index at right of cube
         k = side_total * 4  # first index at back of cube
         l = 0  # first index at left of cube
         i += cube_size * row
