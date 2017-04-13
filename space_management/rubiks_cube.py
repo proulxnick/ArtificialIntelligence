@@ -177,6 +177,11 @@ def randomize_cube():
         count2 = 0
         i += 1
 
+    index = 0
+    for tile in initial_state:
+        tile.position = index
+        index += 1
+
     initial_state = shuffle_cube(initial_state, size)  # randomize the order of the cube
 
     return initial_state, size
