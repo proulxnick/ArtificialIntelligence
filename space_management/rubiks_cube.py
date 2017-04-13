@@ -25,32 +25,39 @@ class Node:
         face_size = len(state) / 6
         for tile in state:
             if i <= face_size \
-                    and not tile == 1:
+                    and not tile.value == 1:
                 complete = False
                 break
             elif face_size * 2 >= i > face_size \
-                    and not tile == 2:
+                    and not tile.value == 2:
                 complete = False
                 break
             elif face_size * 3 >= i > face_size * 2 \
-                    and not tile == 3:
+                    and not tile.value == 3:
                 complete = False
                 break
             elif face_size * 4 >= i > face_size * 3 \
-                    and not tile == 4:
+                    and not tile.value == 4:
                 complete = False
                 break
             elif face_size * 5 >= i > face_size * 4 \
-                    and not tile == 5:
+                    and not tile.value == 5:
                 complete = False
                 break
             elif len(state) >= i > face_size * 5 \
-                    and not tile == 6:
+                    and not tile.value == 6:
                 complete = False
                 break
             i += 1
 
         return complete
+
+
+class Tile:
+
+    def __init__(self, value):
+        self.value = value
+        self.position = None
 
 
 def copy_list(old_list):
@@ -100,22 +107,22 @@ def out_of_place(node):
     face_size = len(node.state) / 6
     for tile in node.state:
         if i <= face_size \
-           and not tile == 1:
+           and not tile.value == 1:
             count += 1
         elif face_size * 2 >= i > face_size \
-                and not tile == 2:
+                and not tile.value == 2:
             count += 1
         elif face_size * 3 >= i > face_size * 2 \
-                and not tile == 3:
+                and not tile.value == 3:
             count += 1
         elif face_size * 4 >= i > face_size * 3 \
-                and not tile == 4:
+                and not tile.value == 4:
             count += 1
         elif face_size * 5 >= i > face_size * 4 \
-                and not tile == 5:
+                and not tile.value == 5:
             count += 1
         elif len(node.state) >= i > face_size * 5 \
-                and not tile == 6:
+                and not tile.value == 6:
             count += 1
         i += 1
 
@@ -125,7 +132,7 @@ def out_of_place(node):
 def shuffle_cube(state, size):
     count = 1
     state = state
-    while count <= 3:
+    while count <= 1:
         move_choice = random.randrange(1, 7)
         if move_choice == 1:
             state = shuffle_moves.move_1(state, size)
@@ -163,7 +170,8 @@ def randomize_cube():
     i = 1
     while count1 < 6:
         while count2 < math.pow(size, 2):
-            initial_state.append(i)
+            tile = Tile(i)
+            initial_state.append(tile)
             count2 += 1
         count1 += 1
         count2 = 0
@@ -698,7 +706,7 @@ def print_cube_state(state, cube_size):
     x = 0
     z = 1
     while x < len(state):
-        print state[x],
+        print state[x].value,
         if z == math.pow(cube_size, 2):
             print ' ',
             z = 0
