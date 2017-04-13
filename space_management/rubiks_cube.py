@@ -95,7 +95,7 @@ def out_of_place(node):
 
 def shuffle_cube(state, size):
     count = 1
-    while count <= 6:
+    while count <= 4:
         move_choice = random.randrange(1, 7)
         if move_choice == 1:
             state = shuffle_moves.move_1(state, size)
