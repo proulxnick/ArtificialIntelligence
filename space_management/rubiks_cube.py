@@ -63,6 +63,36 @@ def copy_list(old_list):
     return new_list
 
 
+def cube_distance(node, cube_size):
+    x_axis_members = list()
+    x = 1
+    while x <= cube_size:
+        x_axis_members.append([])
+
+    y_axis_members = list()
+    y = 1
+    while y <= cube_size:
+        y_axis_members.append([])
+
+    # populate the face_members (z-axis finder)
+    face_members = [[], [], [], [], [], []]
+    face_members[0] = node.state[:cube_size]
+    face_members[1] = node.state[cube_size:cube_size*2]
+    face_members[2] = node.state[cube_size * 2:cube_size * 3]
+    face_members[3] = node.state[cube_size * 3:cube_size * 4]
+    face_members[4] = node.state[cube_size * 4:cube_size * 5]
+    face_members[5] = node.state[cube_size * 5:]
+
+    # populate x_members, y_members
+    i = 0
+    j = 0  # x boundary
+    k = 0  # y boundary
+    while i < len(node.state):
+        for tile in node.state:
+            x_axis_members[j].append(tile)
+            y_axis_members[k].append(tile)
+
+
 def out_of_place(node):
     # heuristic to find number of nodes out of goal state positioning
     i = 1
@@ -89,26 +119,26 @@ def out_of_place(node):
             count += 1
         i += 1
 
-    node.heuristic_value = count
-    return node
+    return count
 
 
-def shuffle_cube(state, size):
+def shuffle_cube(old_state, size):
     count = 1
-    while count <= 4:
+    state = None
+    while count <= 1:
         move_choice = random.randrange(1, 7)
         if move_choice == 1:
-            state = shuffle_moves.move_1(state, size)
+            state = shuffle_moves.move_1(old_state, size)
         elif move_choice == 2:
-            state = shuffle_moves.move_2(state, size)
+            state = shuffle_moves.move_2(old_state, size)
         elif move_choice == 3:
-            state = shuffle_moves.move_3(state, size)
+            state = shuffle_moves.move_3(old_state, size)
         elif move_choice == 4:
-            state = shuffle_moves.move_4(state, size)
+            state = shuffle_moves.move_4(old_state, size)
         elif move_choice == 5:
-            state = shuffle_moves.move_5(state, size)
+            state = shuffle_moves.move_5(old_state, size)
         elif move_choice == 6:
-            state = shuffle_moves.move_6(state, size)
+            state = shuffle_moves.move_6(old_state, size)
         count += 1
 
     return state
@@ -117,7 +147,7 @@ def shuffle_cube(state, size):
 def randomize_cube():
     valid_size = False
     initial_state = list()
-    size = 0
+    size = 2
 
     # get the user to input the degree of the cube
     while not valid_size:
@@ -139,7 +169,11 @@ def randomize_cube():
         count2 = 0
         i += 1
 
-    initial_state = shuffle_cube(initial_state, size)  # randomize the order of the cube
+    # initial_state, move = shuffle_cube(initial_state, size)  # randomize the order of the cube
+    shuffle_moves.move_1(initial_state, size)
+    shuffle_moves.move_4(initial_state, size)
+    shuffle_moves.move_3(initial_state, size)
+    shuffle_moves.move_5(initial_state, size)
 
     return initial_state, size
 
@@ -379,14 +413,6 @@ def process_moves(curr_node, cube_size):
             new_node.depth = curr_node.depth + 1
             curr_node.children.append(new_node)
             used_states.append(new_state)
-        i = side_total * 5  # first index at front of cube
-        j = side_total  # first index at top of cube
-        k = side_total * 4  # first index at back of cube
-        l = side_total * 3  # first index at bottom of cube
-        i += cube_size * row
-        j += cube_size * row
-        k += cube_size * row
-        l += cube_size * row
         row += 1
 
     # move left front
@@ -450,14 +476,6 @@ def process_moves(curr_node, cube_size):
             new_node.depth = curr_node.depth + 1
             curr_node.children.append(new_node)
             used_states.append(new_state)
-        i = side_total * 5  # first index at front of cube
-        j = side_total * 2  # first index at right of cube
-        k = side_total * 4  # first index at back of cube
-        l = 0  # first index at left of cube
-        i += cube_size * row
-        j += cube_size * row
-        k += cube_size * row
-        l += cube_size * row
         row += 1
 
     # move up left
@@ -602,16 +620,81 @@ def process_moves(curr_node, cube_size):
         l += row
         row += 1
 
+    return curr_node, cube_size
+
+
+def path_exists(path_list, new_node):
+    # this is a method to check if the state of the given node exists in the given path
+    is_old_state = False
+
+    for node in path_list:
+        if new_node.state == node.state:
+            is_old_state = True
+
+    return is_old_state
+
 
 def a_star():
     initial_state, cube_size = randomize_cube()
     node = Node()
     node.state = initial_state
     path_to_goal = list()
+    path_to_goal.append(node)
     closed = list()
     transplanted = list()
-    path_to_goal.append(node)
     scope_changes = 0
+
+    while not node.is_at_goal(node.state):
+        # initialize the curr node's children + get their states
+        node, cube_size = process_moves(node, cube_size)
+
+        cheapest = None
+        curr_node = Node()
+        for each_node in node.children:
+            if not path_exists(path_to_goal, each_node):
+                heuristic = out_of_place(each_node)
+                if cheapest is None \
+                        or heuristic < cheapest:
+                    cheapest = heuristic
+                    curr_node = each_node  # current node now has cheapest run time at it's depth
+                    if cheapest == 0:  # at goal
+                        break
+
+        for each_node in node.children:
+            cost = out_of_place(each_node)
+            if not each_node.state == curr_node.state:
+                each_node.heuristic_value = cost
+                closed.append(each_node)  # only append if the current node is not in the closed list
+            else:
+                curr_node.heuristic_value = cost
+
+        transplant = False  # to check if a node's children were transplanted for change of scope
+        # if path_exists(closed, curr_node):
+        #     for closed_node in closed:
+        #         if closed_node.state == curr_node.state \
+        #                 and closed_node.heuristic_value <= curr_node.heuristic_value \
+        #                 and closed_node.depth < curr_node.depth \
+        #                 and closed_node.state not in transplanted \
+        #                 and curr_node.state not in transplanted:
+        #             # there is a better option in the list of nodes visited, transplant the children
+        #             i = closed_node.depth
+        #             path_to_goal = path_to_goal[:i]
+        #             path_to_goal.append(closed_node)
+        #             transplant = True
+        #             transplanted.append(closed_node.state)
+        #             transplanted.append(curr_node.state)
+        #             scope_changes += 1
+        #             break
+
+        if not transplant:
+            # append the node with the cheapest crossing time to the final path to the goal state
+            path_to_goal.append(curr_node)
+
+        node = path_to_goal[-1]  # get successors / fringe from the cheapest node at this state
+    print '\nA star search chosen'
+    print 'Total number of moves: ' + str(node.depth)
+    # print 'Total number of transplants of children (changes of scope): ' + str(scope_changes)
+    return path_to_goal, cube_size
 
 
 def print_cube_state(state, cube_size):
@@ -631,12 +714,8 @@ def print_cube_state(state, cube_size):
 
 # to be called at top level
 def main():
-    parent = Node()
-    state, size = randomize_cube()
-    print_cube_state(state, size)
-    parent.state = state
-    process_moves(parent, size)
-    for child in parent.children:
+    path, size = a_star()
+    for child in path:
         print_cube_state(child.state, size)
 
 
