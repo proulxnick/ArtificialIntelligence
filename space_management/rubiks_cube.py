@@ -63,7 +63,7 @@ def copy_list(old_list):
     return new_list
 
 
-def cube_distance(node, cube_size):
+def cubie_distance(node, cube_size):
     x_axis_members = list()
     x = 1
     while x <= cube_size:
@@ -122,23 +122,23 @@ def out_of_place(node):
     return count
 
 
-def shuffle_cube(old_state, size):
+def shuffle_cube(state, size):
     count = 1
-    state = None
-    while count <= 1:
+    state = state
+    while count <= 3:
         move_choice = random.randrange(1, 7)
         if move_choice == 1:
-            state = shuffle_moves.move_1(old_state, size)
+            state = shuffle_moves.move_1(state, size)
         elif move_choice == 2:
-            state = shuffle_moves.move_2(old_state, size)
+            state = shuffle_moves.move_2(state, size)
         elif move_choice == 3:
-            state = shuffle_moves.move_3(old_state, size)
+            state = shuffle_moves.move_3(state, size)
         elif move_choice == 4:
-            state = shuffle_moves.move_4(old_state, size)
+            state = shuffle_moves.move_4(state, size)
         elif move_choice == 5:
-            state = shuffle_moves.move_5(old_state, size)
+            state = shuffle_moves.move_5(state, size)
         elif move_choice == 6:
-            state = shuffle_moves.move_6(old_state, size)
+            state = shuffle_moves.move_6(state, size)
         count += 1
 
     return state
@@ -147,7 +147,7 @@ def shuffle_cube(old_state, size):
 def randomize_cube():
     valid_size = False
     initial_state = list()
-    size = 2
+    size = 0
 
     # get the user to input the degree of the cube
     while not valid_size:
@@ -169,11 +169,7 @@ def randomize_cube():
         count2 = 0
         i += 1
 
-    # initial_state, move = shuffle_cube(initial_state, size)  # randomize the order of the cube
-    shuffle_moves.move_1(initial_state, size)
-    shuffle_moves.move_4(initial_state, size)
-    shuffle_moves.move_3(initial_state, size)
-    shuffle_moves.move_5(initial_state, size)
+    initial_state = shuffle_cube(initial_state, size)  # randomize the order of the cube
 
     return initial_state, size
 
@@ -233,8 +229,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[m:m+cube_size])
-                    z += 2
-                    m += 2
+                    z += cube_size
+                    m += cube_size
 
                 rotated_face = rotate_counterclockwise(new_face)
                 m = 0  # first index at left of cube
@@ -248,8 +244,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[n:n+cube_size])
-                    z += 2
-                    n += 2
+                    z += cube_size
+                    n += cube_size
 
                 rotated_face = rotate_clockwise(new_face)
                 n = side_total * 2  # first index at right of cube
@@ -304,8 +300,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[m:m+cube_size])
-                    z += 2
-                    m += 2
+                    z += cube_size
+                    m += cube_size
 
                 rotated_face = rotate_clockwise(new_face)
                 m = 0  # first index at left of cube
@@ -319,8 +315,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[n:n+cube_size])
-                    z += 2
-                    n += 2
+                    z += cube_size
+                    n += cube_size
 
                 rotated_face = rotate_counterclockwise(new_face)
                 n = side_total * 2  # first index at right of cube
@@ -375,8 +371,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[m:m+cube_size])
-                    z += 2
-                    m += 2
+                    z += cube_size
+                    m += cube_size
 
                 rotated_face = rotate_counterclockwise(new_face)
                 m = side_total  # first index at top of cube
@@ -390,8 +386,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[n:n+cube_size])
-                    z += 2
-                    n += 2
+                    z += cube_size
+                    n += cube_size
 
                 rotated_face = rotate_clockwise(new_face)
                 n = side_total * 3  # first index at bottom of cube
@@ -438,8 +434,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[m:m+cube_size])
-                    z += 2
-                    m += 2
+                    z += cube_size
+                    m += cube_size
 
                 rotated_face = rotate_clockwise(new_face)
                 m = side_total  # first index at top of cube
@@ -453,8 +449,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[n:n+cube_size])
-                    z += 2
-                    n += 2
+                    z += cube_size
+                    n += cube_size
 
                 rotated_face = rotate_counterclockwise(new_face)
                 n = side_total * 3  # first index at bottom of cube
@@ -501,8 +497,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[m:m+cube_size])
-                    z += 2
-                    m += 2
+                    z += cube_size
+                    m += cube_size
 
                 rotated_face = rotate_counterclockwise(new_face)
                 m = side_total * 4  # first index at back of cube
@@ -516,8 +512,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[n:n+cube_size])
-                    z += 2
-                    n += 2
+                    z += cube_size
+                    n += cube_size
 
                 rotated_face = rotate_clockwise(new_face)
                 n = side_total * 5  # first index at front of cube
@@ -572,8 +568,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[m:m+cube_size])
-                    z += 2
-                    m += 2
+                    z += cube_size
+                    m += cube_size
 
                 rotated_face = rotate_clockwise(new_face)
                 m = side_total * 4  # first index at back of cube
@@ -587,8 +583,8 @@ def process_moves(curr_node, cube_size):
                 new_face = list()
                 while z < side_total:
                     new_face.append(cube_state[n:n+cube_size])
-                    z += 2
-                    n += 2
+                    z += cube_size
+                    n += cube_size
 
                 rotated_face = rotate_counterclockwise(new_face)
                 n = side_total * 5  # first index at front of cube
@@ -669,22 +665,22 @@ def a_star():
                 curr_node.heuristic_value = cost
 
         transplant = False  # to check if a node's children were transplanted for change of scope
-        # if path_exists(closed, curr_node):
-        #     for closed_node in closed:
-        #         if closed_node.state == curr_node.state \
-        #                 and closed_node.heuristic_value <= curr_node.heuristic_value \
-        #                 and closed_node.depth < curr_node.depth \
-        #                 and closed_node.state not in transplanted \
-        #                 and curr_node.state not in transplanted:
-        #             # there is a better option in the list of nodes visited, transplant the children
-        #             i = closed_node.depth
-        #             path_to_goal = path_to_goal[:i]
-        #             path_to_goal.append(closed_node)
-        #             transplant = True
-        #             transplanted.append(closed_node.state)
-        #             transplanted.append(curr_node.state)
-        #             scope_changes += 1
-        #             break
+        if path_exists(closed, curr_node):
+            for closed_node in closed:
+                if closed_node.state == curr_node.state \
+                        and closed_node.heuristic_value <= curr_node.heuristic_value \
+                        and closed_node.depth < curr_node.depth \
+                        and closed_node.state not in transplanted \
+                        and curr_node.state not in transplanted:
+                    # there is a better option in the list of nodes visited, transplant the children
+                    i = closed_node.depth
+                    path_to_goal = path_to_goal[:i]
+                    path_to_goal.append(closed_node)
+                    transplant = True
+                    transplanted.append(closed_node.state)
+                    transplanted.append(curr_node.state)
+                    scope_changes += 1
+                    break
 
         if not transplant:
             # append the node with the cheapest crossing time to the final path to the goal state
@@ -693,7 +689,7 @@ def a_star():
         node = path_to_goal[-1]  # get successors / fringe from the cheapest node at this state
     print '\nA star search chosen'
     print 'Total number of moves: ' + str(node.depth)
-    # print 'Total number of transplants of children (changes of scope): ' + str(scope_changes)
+    print 'Total number of transplants of children (changes of scope): ' + str(scope_changes)
     return path_to_goal, cube_size
 
 

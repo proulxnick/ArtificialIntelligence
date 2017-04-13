@@ -59,8 +59,8 @@ def move_1(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[m:m + cube_size])
-                z += 2
-                m += 2
+                z += cube_size
+                m += cube_size
 
             rotated_face = rotate_counterclockwise(new_face)
             m = 0  # first index at left of cube
@@ -74,8 +74,8 @@ def move_1(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[n:n + cube_size])
-                z += 2
-                n += 2
+                z += cube_size
+                n += cube_size
 
             rotated_face = rotate_clockwise(new_face)
             n = side_total * 2  # first index at right of cube
@@ -117,8 +117,8 @@ def move_2(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[m:m + cube_size])
-                z += 2
-                m += 2
+                z += cube_size
+                m += cube_size
 
             rotated_face = rotate_clockwise(new_face)
             m = 0  # first index at left of cube
@@ -132,8 +132,8 @@ def move_2(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[n:n + cube_size])
-                z += 2
-                n += 2
+                z += cube_size
+                n += cube_size
 
             rotated_face = rotate_counterclockwise(new_face)
             n = side_total * 2  # first index at right of cube
@@ -176,8 +176,8 @@ def move_3(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[m:m + cube_size])
-                z += 2
-                m += 2
+                z += cube_size
+                m += cube_size
 
             rotated_face = rotate_counterclockwise(new_face)
             m = side_total  # first index at top of cube
@@ -191,8 +191,8 @@ def move_3(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[n:n + cube_size])
-                z += 2
-                n += 2
+                z += cube_size
+                n += cube_size
 
             rotated_face = rotate_clockwise(new_face)
             n = side_total * 3  # first index at bottom of cube
@@ -235,8 +235,8 @@ def move_4(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[m:m + cube_size])
-                z += 2
-                m += 2
+                z += cube_size
+                m += cube_size
 
             rotated_face = rotate_clockwise(new_face)
             m = side_total  # first index at top of cube
@@ -250,8 +250,8 @@ def move_4(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[n:n + cube_size])
-                z += 2
-                n += 2
+                z += cube_size
+                n += cube_size
 
             rotated_face = rotate_counterclockwise(new_face)
             n = side_total * 3  # first index at bottom of cube
@@ -293,8 +293,8 @@ def move_5(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[m:m + cube_size])
-                z += 2
-                m += 2
+                z += cube_size
+                m += cube_size
 
             rotated_face = rotate_counterclockwise(new_face)
             m = side_total * 4  # first index at back of cube
@@ -308,8 +308,8 @@ def move_5(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[n:n + cube_size])
-                z += 2
-                n += 2
+                z += cube_size
+                n += cube_size
 
             rotated_face = rotate_clockwise(new_face)
             n = side_total * 5  # first index at front of cube
@@ -351,8 +351,8 @@ def move_6(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[m:m + cube_size])
-                z += 2
-                m += 2
+                z += cube_size
+                m += cube_size
 
             rotated_face = rotate_clockwise(new_face)
             m = side_total * 4  # first index at back of cube
@@ -366,8 +366,8 @@ def move_6(cube_state, cube_size):
             new_face = list()
             while z < side_total:
                 new_face.append(cube_state[n:n + cube_size])
-                z += 2
-                n += 2
+                z += cube_size
+                n += cube_size
 
             rotated_face = rotate_counterclockwise(new_face)
             n = side_total * 5  # first index at front of cube
