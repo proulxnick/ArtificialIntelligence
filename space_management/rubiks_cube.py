@@ -57,7 +57,10 @@ class Tile:
 
     def __init__(self, value):
         self.value = value
-        self.position = None
+        self.position = None  # home index
+        self.current = None  # current index
+        self.column = None  # current column
+        self.row = None  # current row
 
 
 def copy_list(old_list):
@@ -195,6 +198,20 @@ def rotate_counterclockwise(face):
         for value in row:
             new_face.append(value)
 
+    cube_size = len(new_face) / 6
+    degree = int(math.sqrt(cube_size))
+    row = 1
+    index = 0
+    while row <= degree:
+        column = 1
+        while column <= degree:
+            new_face[index].current = index
+            new_face[index].column = column
+            new_face[index].row = row
+            index += 1
+            column += 1
+        row += 1
+
     return new_face
 
 
@@ -205,6 +222,20 @@ def rotate_clockwise(face):
     for row in face:
         for value in row:
             new_face.append(value)
+
+    cube_size = len(new_face) / 6
+    degree = int(math.sqrt(cube_size))
+    row = 1
+    index = 0
+    while row <= degree:
+        column = 1
+        while column <= degree:
+            new_face[index].current = index
+            new_face[index].column = column
+            new_face[index].row = row
+            index += 1
+            column += 1
+        row += 1
 
     return new_face
 
@@ -233,9 +264,25 @@ def process_moves(curr_node, cube_size):
         rotation = False
         while column < cube_size:
             new_state[j] = cube_state[i]  # front -> top
+            new_state[j].current = j
+            new_state[j].column = row
+            new_state[j].row = column + 1
+
             new_state[k] = cube_state[j]  # top -> back
+            new_state[k].current = k
+            new_state[k].column = row
+            new_state[k].row = column + 1
+
             new_state[l] = cube_state[k]  # back -> bottom
+            new_state[l].current = l
+            new_state[l].column = row
+            new_state[l].row = column + 1
+
             new_state[i] = cube_state[l]  # bottom -> front
+            new_state[i].current = j
+            new_state[i].column = row
+            new_state[i].row = column + 1
+
             if row == 1 and not rotation:  # left side rotates
                 rotation = True
                 z = 0
@@ -304,9 +351,25 @@ def process_moves(curr_node, cube_size):
         rotation = False
         while column < cube_size:
             new_state[l] = cube_state[i]  # front -> bottom
+            new_state[l].current = l
+            new_state[l].column = row
+            new_state[l].row = column + 1
+
             new_state[k] = cube_state[l]  # bottom -> back
+            new_state[k].current = l
+            new_state[k].column = row
+            new_state[k].row = column + 1
+
             new_state[j] = cube_state[k]  # back -> top
+            new_state[j].current = j
+            new_state[j].column = row
+            new_state[j].row = column + 1
+
             new_state[i] = cube_state[j]  # top -> front
+            new_state[i].current = i
+            new_state[i].column = row
+            new_state[i].row = column + 1
+
             if row == 1 and not rotation:  # left side rotates
                 rotation = True
                 z = 0
@@ -375,9 +438,25 @@ def process_moves(curr_node, cube_size):
         rotation = False
         while column < cube_size:
             new_state[j] = cube_state[i]  # front -> right
+            new_state[j].current = j
+            new_state[j].column = column + 1
+            new_state[j].row = row
+
             new_state[k] = cube_state[j]  # right -> back
+            new_state[k].current = k
+            new_state[k].column = column + 1
+            new_state[k].row = row
+
             new_state[l] = cube_state[k]  # back -> left
+            new_state[l].current = l
+            new_state[l].column = column + 1
+            new_state[l].row = row
+
             new_state[i] = cube_state[l]  # left -> front
+            new_state[i].current = i
+            new_state[i].column = column + 1
+            new_state[i].row = row
+
             if row == 1 and not rotation:  # top side rotates
                 rotation = True
                 z = 0
@@ -438,9 +517,25 @@ def process_moves(curr_node, cube_size):
         rotation = False
         while column < cube_size:
             new_state[l] = cube_state[i]  # front -> left
+            new_state[l].current = l
+            new_state[l].column = column + 1
+            new_state[l].row = row
+
             new_state[k] = cube_state[l]  # left -> back
+            new_state[k].current = k
+            new_state[k].column = column + 1
+            new_state[k].row = row
+
             new_state[j] = cube_state[k]  # back -> right
+            new_state[j].current = j
+            new_state[j].column = column + 1
+            new_state[j].row = row
+
             new_state[i] = cube_state[j]  # right -> front
+            new_state[i].current = i
+            new_state[i].column = column + 1
+            new_state[i].row = row
+
             if row == 1 and not rotation:  # top side rotates
                 rotation = True
                 z = 0
@@ -501,9 +596,25 @@ def process_moves(curr_node, cube_size):
         rotation = False
         while column < cube_size:
             new_state[j] = cube_state[i]  # left -> top
+            new_state[j].current = j
+            new_state[j].column = row
+            new_state[j].row = column + 1
+
             new_state[k] = cube_state[j]  # top -> right
+            new_state[k].current = k
+            new_state[k].column = row
+            new_state[k].row = column + 1
+
             new_state[l] = cube_state[k]  # right -> bottom
+            new_state[l].current = l
+            new_state[l].column = row
+            new_state[l].row = column + 1
+
             new_state[i] = cube_state[l]  # bottom -> left
+            new_state[i].current = i
+            new_state[i].column = row
+            new_state[i].row = column + 1
+
             if row == 1 and not rotation:  # left side rotates
                 rotation = True
                 z = 0
@@ -572,9 +683,25 @@ def process_moves(curr_node, cube_size):
         rotation = False
         while column < cube_size:
             new_state[l] = cube_state[i]  # left -> bottom
+            new_state[l].current = l
+            new_state[l].column = row
+            new_state[l].row = column + 1
+
             new_state[k] = cube_state[l]  # bottom -> right
+            new_state[k].current = k
+            new_state[k].column = row
+            new_state[k].row = column + 1
+
             new_state[j] = cube_state[k]  # right -> top
+            new_state[j].current = j
+            new_state[j].column = row
+            new_state[j].row = column + 1
+
             new_state[i] = cube_state[j]  # top -> left
+            new_state[i].current = i
+            new_state[i].column = row
+            new_state[i].row = column + 1
+
             if row == 1 and not rotation:  # left side rotates
                 rotation = True
                 z = 0
