@@ -61,6 +61,7 @@ class Tile:
         self.current = None  # current index
         self.column = None  # current column
         self.row = None  # current row
+        self.face = None
         self.home_row = None
         self.home_column = None
         self.home_face = None
@@ -78,16 +79,50 @@ def copy_list(old_list):
 
 def cubie_distance(node, cube_size):
     distance = 0
+
+    # specify which face they belong to
+    face_size = int(math.pow(cube_size, 2))
+    face_1 = node.state[:face_size]
+    face_2 = node.state[face_size:face_size * 2]
+    face_3 = node.state[face_size * 2:face_size * 3]
+    face_4 = node.state[face_size * 3:face_size * 4]
+    face_5 = node.state[face_size * 4:face_size * 5]
+    face_6 = node.state[face_size * 5:]
+
+    # min number of row moves (Y-axis)
     for tile in node.state:
         min_row_move = tile.row - tile.home_row
         if min_row_move < 0:
             min_row_move *= -1
         distance += min_row_move
 
+        # min number of column moves (X-axis)
         min_column_move = tile.column - tile.home_column
         if min_column_move < 0:
             min_column_move *= -1
         distance += min_column_move
+
+        # min number of face moves (Z-axis)
+        if tile in face_1:
+            tile.face = 1
+        elif tile in face_2:
+            tile.face = 2
+        elif tile in face_3:
+            tile.face = 3
+        elif tile in face_4:
+            tile.face = 4
+        elif tile in face_5:
+            tile.face = 5
+        elif tile in face_6:
+            tile.face = 6
+
+        # do the actual math
+        min_face_move = tile.face - tile.home_face
+        if min_face_move < 0:
+            min_face_move *= -1
+        distance += min_face_move
+
+    return distance
 
 
 def out_of_place(node):
@@ -122,7 +157,7 @@ def out_of_place(node):
 def shuffle_cube(state, size):
     count = 1
     state = state
-    while count <= 1:
+    while count <= 2:
         move_choice = random.randrange(1, 7)
         if move_choice == 1:
             state = shuffle_moves.move_1(state, size)
@@ -196,7 +231,10 @@ def randomize_cube():
         elif tile in face_6:
             tile.home_face = 6
         index += 1
-        if column == size:
+        if column == size and row == size:
+            column = 1
+            row = 1
+        elif column == size and not row == size:
             column = 1
             row += 1
         else:
@@ -805,7 +843,7 @@ def a_star():
         curr_node = Node()
         for each_node in node.children:
             if not path_exists(path_to_goal, each_node):
-                heuristic = out_of_place(each_node)
+                heuristic = cubie_distance(each_node, cube_size)
                 if cheapest is None \
                         or heuristic < cheapest:
                     cheapest = heuristic
@@ -814,7 +852,7 @@ def a_star():
                         break
 
         for each_node in node.children:
-            cost = out_of_place(each_node)
+            cost = cubie_distance(each_node, cube_size)
             if not each_node.state == curr_node.state:
                 each_node.heuristic_value = cost
                 closed.append(each_node)  # only append if the current node is not in the closed list
