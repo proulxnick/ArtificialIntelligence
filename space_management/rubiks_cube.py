@@ -198,22 +198,22 @@ def out_of_place(node):
 
 
 def shuffle_cube(state, size):
-    count = 1
+    count = 0
     state = state
-    while count <= 1:
-        move_choice = random.randrange(1, 7)
+    while count <= 26:
+        move_choice = random.randrange(1, 3)
         if move_choice == 1:
             state = shuffle_moves.move_1(state, size)
         elif move_choice == 2:
             state = shuffle_moves.move_2(state, size)
         elif move_choice == 3:
-            state = shuffle_moves.move_3(state, size)
+            state = shuffle_moves.move_1(state, size)
         elif move_choice == 4:
-            state = shuffle_moves.move_4(state, size)
+            state = shuffle_moves.move_2(state, size)
         elif move_choice == 5:
-            state = shuffle_moves.move_5(state, size)
+            state = shuffle_moves.move_1(state, size)
         elif move_choice == 6:
-            state = shuffle_moves.move_6(state, size)
+            state = shuffle_moves.move_2(state, size)
         count += 1
 
     return state
@@ -928,12 +928,13 @@ def a_star():
         if not transplant:
             # append the node with the cheapest crossing time to the final path to the goal state
             path_to_goal.append(curr_node)
-        print_cube_state(path_to_goal[-1].state, cube_size)
+        print '\n\n\n==== MOVE ' + str(curr_node.depth) + ' ====\n'
+        pretty_print_cube(path_to_goal[-1].state, cube_size)
 
         node = path_to_goal[-1]  # get successors / fringe from the cheapest node at this state
     print '\nA star search chosen'
     print 'Total number of moves: ' + str(node.depth)
-    print 'Total number of transplants of children (changes of scope): ' + str(scope_changes)
+    # print 'Total number of transplants of children (changes of scope): ' + str(scope_changes)
     return path_to_goal, cube_size
 
 
@@ -950,6 +951,42 @@ def print_cube_state(state, cube_size):
         x += 1
 
     print '\n\n'
+
+
+def pretty_print_cube(state, cube_size):
+    # divide the sides
+    face_size = int(math.pow(cube_size, 2))
+    face_1 = state[:face_size]
+    face_2 = state[face_size:face_size * 2]
+    face_3 = state[face_size * 2:face_size * 3]
+    face_4 = state[face_size * 3:face_size * 4]
+    face_5 = state[face_size * 4:face_size * 5]
+    face_6 = state[face_size * 5:]
+
+    faces = list()
+    faces.append(face_1)
+    faces.append(face_2)
+    faces.append(face_3)
+    faces.append(face_4)
+    faces.append(face_5)
+    faces.append(face_6)
+    # random.shuffle(faces)
+
+    # print faces in order from random cube state
+    count = 1
+    for face in faces:
+        index = 0
+        row = 1
+        print '---- FACE ' + str(count) + '----'
+        while row <= cube_size:
+            column = 1
+            while column <= cube_size:
+                print face[index].value,
+                index += 1
+                column += 1
+            row += 1
+            print ''
+        count += 1
 
 
 # to be called at top level
