@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="041b8d27-143c-49c5-af73-92bf91e2b649" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index_config/shuffle_moves.py" afterPath="$PROJECT_DIR$/index_config/shuffle_moves.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/space_management/rubiks_cube.py" afterPath="$PROJECT_DIR$/space_management/rubiks_cube.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,8 +45,8 @@
       <file leaf-file-name="rubiks_cube.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/space_management/rubiks_cube.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="63">
-              <caret line="670" column="0" lean-forward="true" selection-start-line="670" selection-start-column="0" selection-end-line="670" selection-end-column="0" />
+            <state relative-caret-position="1028">
+              <caret line="196" column="30" lean-forward="false" selection-start-line="196" selection-start-column="30" selection-end-line="196" selection-end-column="30" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -92,8 +91,8 @@
         <option value="$PROJECT_DIR$/gameplay/gameplay.py" />
         <option value="$PROJECT_DIR$/classification/classification.py" />
         <option value="$PROJECT_DIR$/test_scripts/test.py" />
-        <option value="$PROJECT_DIR$/space_management/rubiks_cube.py" />
         <option value="$PROJECT_DIR$/index_config/shuffle_moves.py" />
+        <option value="$PROJECT_DIR$/space_management/rubiks_cube.py" />
       </list>
     </option>
   </component>
@@ -858,26 +857,11 @@
           <line>441</line>
           <option name="timeStamp" value="339" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/space_management/rubiks_cube.py</url>
-          <line>824</line>
-          <option name="timeStamp" value="878" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/space_management/rubiks_cube.py</url>
-          <line>826</line>
-          <option name="timeStamp" value="879" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/space_management/rubiks_cube.py</url>
-          <line>828</line>
-          <option name="timeStamp" value="880" />
-        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="884" />
+      <option name="time" value="886" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1241,8 +1225,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/space_management/rubiks_cube.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="670" column="0" lean-forward="true" selection-start-line="670" selection-start-column="0" selection-end-line="670" selection-end-column="0" />
+        <state relative-caret-position="1028">
+          <caret line="196" column="30" lean-forward="false" selection-start-line="196" selection-start-column="30" selection-end-line="196" selection-end-column="30" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>

@@ -61,6 +61,9 @@ class Tile:
         self.current = None  # current index
         self.column = None  # current column
         self.row = None  # current row
+        self.home_row = None
+        self.home_column = None
+        self.home_face = None
 
 
 def copy_list(old_list):
@@ -74,33 +77,17 @@ def copy_list(old_list):
 
 
 def cubie_distance(node, cube_size):
-    x_axis_members = list()
-    x = 1
-    while x <= cube_size:
-        x_axis_members.append([])
+    distance = 0
+    for tile in node.state:
+        min_row_move = tile.row - tile.home_row
+        if min_row_move < 0:
+            min_row_move *= -1
+        distance += min_row_move
 
-    y_axis_members = list()
-    y = 1
-    while y <= cube_size:
-        y_axis_members.append([])
-
-    # populate the face_members (z-axis finder)
-    face_members = [[], [], [], [], [], []]
-    face_members[0] = node.state[:cube_size]
-    face_members[1] = node.state[cube_size:cube_size*2]
-    face_members[2] = node.state[cube_size * 2:cube_size * 3]
-    face_members[3] = node.state[cube_size * 3:cube_size * 4]
-    face_members[4] = node.state[cube_size * 4:cube_size * 5]
-    face_members[5] = node.state[cube_size * 5:]
-
-    # populate x_members, y_members
-    i = 0
-    j = 0  # x boundary
-    k = 0  # y boundary
-    while i < len(node.state):
-        for tile in node.state:
-            x_axis_members[j].append(tile)
-            y_axis_members[k].append(tile)
+        min_column_move = tile.column - tile.home_column
+        if min_column_move < 0:
+            min_column_move *= -1
+        distance += min_column_move
 
 
 def out_of_place(node):
@@ -180,10 +167,40 @@ def randomize_cube():
         count2 = 0
         i += 1
 
+    # specify which face they belong to
+    face_size = int(math.pow(size, 2))
+    face_1 = initial_state[:face_size]
+    face_2 = initial_state[face_size:face_size * 2]
+    face_3 = initial_state[face_size * 2:face_size * 3]
+    face_4 = initial_state[face_size * 3:face_size * 4]
+    face_5 = initial_state[face_size * 4:face_size * 5]
+    face_6 = initial_state[face_size * 5:]
+
     index = 0
+    row = 1
+    column = 1
     for tile in initial_state:
         tile.position = index
+        tile.home_row = row
+        tile.home_column = column
+        if tile in face_1:
+            tile.home_face = 1
+        elif tile in face_2:
+            tile.home_face = 2
+        elif tile in face_3:
+            tile.home_face = 3
+        elif tile in face_4:
+            tile.home_face = 4
+        elif tile in face_5:
+            tile.home_face = 5
+        elif tile in face_6:
+            tile.home_face = 6
         index += 1
+        if column == size:
+            column = 1
+            row += 1
+        else:
+            column += 1
 
     initial_state = shuffle_cube(initial_state, size)  # randomize the order of the cube
 
