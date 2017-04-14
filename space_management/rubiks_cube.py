@@ -90,6 +90,7 @@ def cubie_distance(node, cube_size):
     face_6 = node.state[face_size * 5:]
 
     # min number of row moves (Y-axis)
+    min_face_move = 0
     for tile in node.state:
         min_row_move = tile.row - tile.home_row
         if min_row_move < 0:
@@ -117,9 +118,49 @@ def cubie_distance(node, cube_size):
             tile.face = 6
 
         # do the actual math
-        min_face_move = tile.face - tile.home_face
-        if min_face_move < 0:
-            min_face_move *= -1
+        if tile.face == 1:
+            if tile.home_face == 1:
+                min_face_move += 0
+            elif tile.home_face == 3:
+                min_face_move += 2
+            else:
+                min_face_move += 1
+        elif tile.face == 2:
+            if tile.home_face == 2:
+                min_face_move += 0
+            elif tile.home_face == 4:
+                min_face_move += 2
+            else:
+                min_face_move += 1
+        elif tile.face == 3:
+            if tile.home_face == 3:
+                min_face_move += 0
+            elif tile.home_face == 1:
+                min_face_move += 2
+            else:
+                min_face_move += 1
+        elif tile.face == 4:
+            if tile.home_face == 4:
+                min_face_move += 0
+            elif tile.home_face == 2:
+                min_face_move += 2
+            else:
+                min_face_move += 1
+        elif tile.face == 5:
+            if tile.home_face == 5:
+                min_face_move += 0
+            elif tile.home_face == 6:
+                min_face_move += 2
+            else:
+                min_face_move += 1
+        elif tile.face == 6:
+            if tile.home_face == 6:
+                min_face_move += 0
+            elif tile.home_face == 5:
+                min_face_move += 2
+            else:
+                min_face_move += 1
+
         distance += min_face_move
 
     return distance
@@ -131,25 +172,27 @@ def out_of_place(node):
     count = 0
     face_size = len(node.state) / 6
     for tile in node.state:
-        if i <= face_size \
-           and not tile.value == 1:
+        # if i <= face_size \
+        #    and not tile.value == 1:
+        #     count += 1
+        # elif face_size * 2 >= i > face_size \
+        #         and not tile.value == 2:
+        #     count += 1
+        # elif face_size * 3 >= i > face_size * 2 \
+        #         and not tile.value == 3:
+        #     count += 1
+        # elif face_size * 4 >= i > face_size * 3 \
+        #         and not tile.value == 4:
+        #     count += 1
+        # elif face_size * 5 >= i > face_size * 4 \
+        #         and not tile.value == 5:
+        #     count += 1
+        # elif len(node.state) >= i > face_size * 5 \
+        #         and not tile.value == 6:
+        #     count += 1
+        # i += 1
+        if not tile.current == tile.position:
             count += 1
-        elif face_size * 2 >= i > face_size \
-                and not tile.value == 2:
-            count += 1
-        elif face_size * 3 >= i > face_size * 2 \
-                and not tile.value == 3:
-            count += 1
-        elif face_size * 4 >= i > face_size * 3 \
-                and not tile.value == 4:
-            count += 1
-        elif face_size * 5 >= i > face_size * 4 \
-                and not tile.value == 5:
-            count += 1
-        elif len(node.state) >= i > face_size * 5 \
-                and not tile.value == 6:
-            count += 1
-        i += 1
 
     return count
 
@@ -157,7 +200,7 @@ def out_of_place(node):
 def shuffle_cube(state, size):
     count = 1
     state = state
-    while count <= 2:
+    while count <= 1:
         move_choice = random.randrange(1, 7)
         if move_choice == 1:
             state = shuffle_moves.move_1(state, size)
@@ -845,19 +888,24 @@ def a_star():
             if not path_exists(path_to_goal, each_node):
                 heuristic = cubie_distance(each_node, cube_size)
                 if cheapest is None \
-                        or heuristic < cheapest:
+                        or heuristic < cheapest\
+                        and each_node not in closed:
                     cheapest = heuristic
                     curr_node = each_node  # current node now has cheapest run time at it's depth
-                    if cheapest == 0:  # at goal
-                        break
+                    curr_node.heuristic_value = cheapest
+                else:
+                    closed.append(each_node)
 
-        for each_node in node.children:
-            cost = cubie_distance(each_node, cube_size)
-            if not each_node.state == curr_node.state:
-                each_node.heuristic_value = cost
-                closed.append(each_node)  # only append if the current node is not in the closed list
-            else:
-                curr_node.heuristic_value = cost
+                if cheapest == 0:  # at goal
+                    break
+
+        # for each_node in node.children:
+        #     cost = cubie_distance(each_node, cube_size)
+        #     if not each_node.state == curr_node.state:
+        #         each_node.heuristic_value = cost
+        #         closed.append(each_node)  # only append if the current node is not in the closed list
+        #     else:
+        #         curr_node.heuristic_value = cost
 
         transplant = False  # to check if a node's children were transplanted for change of scope
         if path_exists(closed, curr_node):
@@ -880,6 +928,7 @@ def a_star():
         if not transplant:
             # append the node with the cheapest crossing time to the final path to the goal state
             path_to_goal.append(curr_node)
+        print_cube_state(path_to_goal[-1].state, cube_size)
 
         node = path_to_goal[-1]  # get successors / fringe from the cheapest node at this state
     print '\nA star search chosen'
@@ -906,8 +955,8 @@ def print_cube_state(state, cube_size):
 # to be called at top level
 def main():
     path, size = a_star()
-    for child in path:
-        print_cube_state(child.state, size)
+    # for child in path:
+    #     print_cube_state(child.state, size)
 
 
 # top level code
