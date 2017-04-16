@@ -200,20 +200,20 @@ def out_of_place(node):
 def shuffle_cube(state, size):
     count = 0
     state = state
-    while count <= 26:
+    while count <= 19:
         move_choice = random.randrange(1, 3)
         if move_choice == 1:
-            state = shuffle_moves.move_1(state, size)
+            state = shuffle_moves.move_3(state, size)
         elif move_choice == 2:
-            state = shuffle_moves.move_2(state, size)
+            state = shuffle_moves.move_4(state, size)
         elif move_choice == 3:
-            state = shuffle_moves.move_1(state, size)
+            state = shuffle_moves.move_4(state, size)
         elif move_choice == 4:
-            state = shuffle_moves.move_2(state, size)
+            state = shuffle_moves.move_4(state, size)
         elif move_choice == 5:
-            state = shuffle_moves.move_1(state, size)
+            state = shuffle_moves.move_5(state, size)
         elif move_choice == 6:
-            state = shuffle_moves.move_2(state, size)
+            state = shuffle_moves.move_6(state, size)
         count += 1
 
     return state
@@ -693,23 +693,23 @@ def process_moves(curr_node, cube_size):
         column = 0
         rotation = False
         while column < cube_size:
-            new_state[j] = cube_state[i]  # left -> top
+            new_state[j] = cube_state[i]  # front -> top
             new_state[j].current = j
             new_state[j].column = row
             new_state[j].row = column + 1
 
-            new_state[k] = cube_state[j]  # top -> right
+            new_state[k] = cube_state[j]  # top -> back
             new_state[k].current = k
             new_state[k].column = row
             new_state[k].row = column + 1
 
-            new_state[l] = cube_state[k]  # right -> bottom
+            new_state[l] = cube_state[k]  # back -> bottom
             new_state[l].current = l
             new_state[l].column = row
             new_state[l].row = column + 1
 
-            new_state[i] = cube_state[l]  # bottom -> left
-            new_state[i].current = i
+            new_state[i] = cube_state[l]  # bottom -> front
+            new_state[i].current = j
             new_state[i].column = row
             new_state[i].row = column + 1
 
@@ -718,12 +718,12 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[m:m+cube_size])
+                    new_face.append(cube_state[m:m + cube_size])
                     z += cube_size
                     m += cube_size
 
                 rotated_face = rotate_counterclockwise(new_face)
-                m = side_total * 4  # first index at back of cube
+                m = 0  # first index at left of cube
                 for value in rotated_face:
                     new_state[m] = value
                     m += 1
@@ -733,12 +733,12 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[n:n+cube_size])
+                    new_face.append(cube_state[n:n + cube_size])
                     z += cube_size
                     n += cube_size
 
                 rotated_face = rotate_clockwise(new_face)
-                n = side_total * 5  # first index at front of cube
+                n = side_total * 2  # first index at right of cube
                 for value in rotated_face:
                     new_state[n] = value
                     n += 1
@@ -757,9 +757,9 @@ def process_moves(curr_node, cube_size):
             new_node.depth = curr_node.depth + 1
             curr_node.children.append(new_node)
             used_states.append(new_state)
-        i = 0  # first index at left of cube
+        i = side_total * 5  # first index at front of cube
         j = side_total  # first index at top of cube
-        k = side_total * 2  # first index at right of cube
+        k = side_total * 4  # first index at back of cube
         l = side_total * 3  # first index at bottom of cube
         i += row
         j += row
@@ -780,22 +780,22 @@ def process_moves(curr_node, cube_size):
         column = 0
         rotation = False
         while column < cube_size:
-            new_state[l] = cube_state[i]  # left -> bottom
+            new_state[l] = cube_state[i]  # front -> bottom
             new_state[l].current = l
             new_state[l].column = row
             new_state[l].row = column + 1
 
-            new_state[k] = cube_state[l]  # bottom -> right
-            new_state[k].current = k
+            new_state[k] = cube_state[l]  # bottom -> back
+            new_state[k].current = l
             new_state[k].column = row
             new_state[k].row = column + 1
 
-            new_state[j] = cube_state[k]  # right -> top
+            new_state[j] = cube_state[k]  # back -> top
             new_state[j].current = j
             new_state[j].column = row
             new_state[j].row = column + 1
 
-            new_state[i] = cube_state[j]  # top -> left
+            new_state[i] = cube_state[j]  # top -> front
             new_state[i].current = i
             new_state[i].column = row
             new_state[i].row = column + 1
@@ -805,12 +805,12 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[m:m+cube_size])
+                    new_face.append(cube_state[m:m + cube_size])
                     z += cube_size
                     m += cube_size
 
                 rotated_face = rotate_clockwise(new_face)
-                m = side_total * 4  # first index at back of cube
+                m = 0  # first index at left of cube
                 for value in rotated_face:
                     new_state[m] = value
                     m += 1
@@ -820,12 +820,12 @@ def process_moves(curr_node, cube_size):
                 z = 0
                 new_face = list()
                 while z < side_total:
-                    new_face.append(cube_state[n:n+cube_size])
+                    new_face.append(cube_state[n:n + cube_size])
                     z += cube_size
                     n += cube_size
 
                 rotated_face = rotate_counterclockwise(new_face)
-                n = side_total * 5  # first index at front of cube
+                n = side_total * 2  # first index at right of cube
                 for value in rotated_face:
                     new_state[n] = value
                     n += 1
@@ -836,7 +836,7 @@ def process_moves(curr_node, cube_size):
             l += cube_size
             column += 1
 
-        # create new node with new_state if not already been created
+        # create new node with new_state
         if new_state not in used_states:
             new_node = Node()
             new_node.state = new_state
@@ -844,9 +844,9 @@ def process_moves(curr_node, cube_size):
             new_node.depth = curr_node.depth + 1
             curr_node.children.append(new_node)
             used_states.append(new_state)
-        i = 0  # first index at left of cube
+        i = side_total * 5  # first index at front of cube
         j = side_total  # first index at top of cube
-        k = side_total * 2  # first index at right of cube
+        k = side_total * 4  # first index at back of cube
         l = side_total * 3  # first index at bottom of cube
         i += row
         j += row
