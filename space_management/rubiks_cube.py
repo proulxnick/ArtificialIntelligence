@@ -1,5 +1,6 @@
 import random
 import math
+import time
 
 from index_config import shuffle_moves
 
@@ -200,7 +201,7 @@ def out_of_place(node):
 def shuffle_cube(state, size):
     count = 0
     state = state
-    while count <= 19:
+    while count <= 35:
         move_choice = random.randrange(1, 3)
         if move_choice == 1:
             state = shuffle_moves.move_3(state, size)
@@ -868,6 +869,49 @@ def path_exists(path_list, new_node):
     return is_old_state
 
 
+def best_first():
+    initial_state, cube_size = randomize_cube()
+    node = Node()
+    node.state = initial_state
+    path_to_goal = list()
+    path_to_goal.append(node)
+    closed = list()
+    transplanted = list()
+    scope_changes = 0
+
+    while not node.is_at_goal(node.state):
+        # initialize the curr node's children + get their states
+        node, cube_size = process_moves(node, cube_size)
+
+        cheapest = None
+        curr_node = Node()
+        for each_node in node.children:
+            if not path_exists(path_to_goal, each_node):
+                heuristic = cubie_distance(each_node, cube_size)
+                if cheapest is None \
+                        or heuristic < cheapest\
+                        and each_node not in closed:
+                    cheapest = heuristic
+                    curr_node = each_node  # current node now has cheapest run time at it's depth
+                    curr_node.heuristic_value = cheapest
+                else:
+                    closed.append(each_node)
+
+                if cheapest == 0:  # at goal
+                    break
+
+        # append the node with the cheapest crossing time to the final path to the goal state
+        path_to_goal.append(curr_node)
+        # print '\n\n\n==== MOVE ' + str(curr_node.depth) + ' ====\n'
+        # pretty_print_cube(path_to_goal[-1].state, cube_size)
+
+        node = path_to_goal[-1]  # get successors / fringe from the cheapest node at this state
+    print '\nBest first search chosen'
+    print 'Total number of moves: ' + str(node.depth + 1)
+    # print 'Total number of transplants of children (changes of scope): ' + str(scope_changes)
+    return path_to_goal, cube_size
+
+
 def a_star():
     initial_state, cube_size = randomize_cube()
     node = Node()
@@ -899,14 +943,6 @@ def a_star():
                 if cheapest == 0:  # at goal
                     break
 
-        # for each_node in node.children:
-        #     cost = cubie_distance(each_node, cube_size)
-        #     if not each_node.state == curr_node.state:
-        #         each_node.heuristic_value = cost
-        #         closed.append(each_node)  # only append if the current node is not in the closed list
-        #     else:
-        #         curr_node.heuristic_value = cost
-
         transplant = False  # to check if a node's children were transplanted for change of scope
         if path_exists(closed, curr_node):
             for closed_node in closed:
@@ -928,12 +964,12 @@ def a_star():
         if not transplant:
             # append the node with the cheapest crossing time to the final path to the goal state
             path_to_goal.append(curr_node)
-        print '\n\n\n==== MOVE ' + str(curr_node.depth) + ' ====\n'
-        pretty_print_cube(path_to_goal[-1].state, cube_size)
+        # print '\n\n\n==== MOVE ' + str(curr_node.depth) + ' ====\n'
+        # pretty_print_cube(path_to_goal[-1].state, cube_size)
 
         node = path_to_goal[-1]  # get successors / fringe from the cheapest node at this state
     print '\nA star search chosen'
-    print 'Total number of moves: ' + str(node.depth)
+    print 'Total number of moves: ' + str(node.depth + 1)
     # print 'Total number of transplants of children (changes of scope): ' + str(scope_changes)
     return path_to_goal, cube_size
 
@@ -992,8 +1028,12 @@ def pretty_print_cube(state, cube_size):
 # to be called at top level
 def main():
     path, size = a_star()
-    # for child in path:
-    #     print_cube_state(child.state, size)
+    # time.sleep(12)
+    i = 1
+    for child in path:
+        print '\n\n\n==== MOVE ' + str(i) + ' ====\n'
+        pretty_print_cube(child.state, size)
+        i += 1
 
 
 # top level code
